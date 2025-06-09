@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaLaTyPuS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navigation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-text {
+            font-family: 'Arial Black', 'Arial', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover {
+            opacity: 0.7;
+        }
+
+        /* Navigation Buffer */
+        .navigation-buffer {
+            height: 80px;
+        }
+
+        /* Hero Section */
+        .hero-wrapper {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a1a, #333);
+            z-index: 1;
+        }
+
+        .hero-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-logo {
+            font-family: 'Arial Black', 'Arial', sans-serif;
+            font-weight: 900;
+            font-size: 4rem;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero-tagline {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .find-event-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: black;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .find-event-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .archive-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .archive-link:hover {
+            opacity: 1;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .archive-link:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* Cities Section */
+        .cities-section {
+            padding: 80px 40px;
+        }
+
+        .cities-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .cities-title {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+
+        .city-button {
+            position: relative;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+            background-color: #333;
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+        }
+
+        .city-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        }
+
+        .city-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .city-button:hover {
+            transform: scale(1.02);
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 60px 40px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .content-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .content-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background: #333;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0a0a0a;
+            padding: 60px 40px 40px;
+        }
+
+        .signup-section {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px;
+            border: 1px solid #333;
+        }
+
+        .signup-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .signup-btn {
+            background: white;
+            color: black;
+            padding: 15px 40px;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signup-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-family: 'Arial Black', 'Arial', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .footer-logo {
+            font-family: 'Arial Black', 'Arial', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .copyright {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navigation-container {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-link {
+                font-size: 12px;
+            }
+
+            .hero-logo {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+
+            .cities-section {
+                padding: 40px 20px;
+            }
+
+            .cities-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .cities-title {
+                font-size: 32px;
+            }
+
+            .content-section {
+                padding: 40px 20px;
+            }
+
+            .footer {
+                padding: 40px 20px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .hero-cta {
+                gap: 15px;
+            }
+
+            .find-event-btn {
+                padding: 12px 25px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="navigation-container">
+        <a href="#" class="logo">
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 32px; width: auto;">
+        </a>
+        
+        <div class="nav-links">
+            <a href="#" class="nav-link">Events</a>
+            <a href="#" class="nav-link">Video</a>
+            <a href="#" class="nav-link">Audio</a>
+            <a href="#" class="nav-link">Shop</a>
+            <a href="#" class="nav-link">Editorial</a>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#" class="nav-link">Search</a>
+            <a href="#" class="nav-link">Login</a>
+        </div>
+    </div>
+
+    <div class="navigation-buffer"></div>
+
+    <!-- Hero Section -->
+    <div class="hero-wrapper">
+        <div class="hero-background"></div>
+        <div class="hero-gradient"></div>
+        <div class="hero-content">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="max-width: 600px; width: 100%; height: auto;">
+                <p class="hero-tagline">Connecting Club Culture To The World</p>
+            </div>
+            
+            <div class="hero-cta">
+                <button class="find-event-btn">
+                    📍 FIND AN EVENT
+                </button>
+                
+                <a href="#content" class="archive-link">
+                    Browse the archive
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cities Section -->
+    <div class="cities-section">
+        <div class="cities-header">
+            <h3 class="cities-title">Cities</h3>
+            <a href="#" class="archive-link">
+                FIND YOUR CITY
+                <span class="arrow">→</span>
+            </a>
+        </div>
+        
+        <div class="cities-grid">
+            <a href="#" class="city-button">
+                <span>London</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>New York</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Berlin</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Los Angeles</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Amsterdam</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Paris</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Mexico City</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>São Paulo</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Barcelona</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Melbourne</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Tokyo</span>
+            </a>
+            <a href="#" class="city-button">
+                <span>Madrid</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section" id="content">
+        <h3 class="section-title">New on PaLaTyPuS</h3>
+        <div class="content-grid">
+            <div class="content-card">
+                <div class="card-image">
+                    ARTIST PHOTO
+                </div>
+                <div class="card-content">
+                    <h4 class="card-title">Featured Artist 1</h4>
+                    <p class="card-description">This is where you would put a description of the artist or event. You can customize this content for your specific needs.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-image">
+                    EVENT PHOTO
+                </div>
+                <div class="card-content">
+                    <h4 class="card-title">Featured Event</h4>
+                    <p class="card-description">Another content card that you can customize with your own information, images, and descriptions.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-image">
+                    VENUE PHOTO
+                </div>
+                <div class="card-content">
+                    <h4 class="card-title">Featured Venue</h4>
+                    <p class="card-description">You can add as many of these content cards as you need for your website.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="signup-section">
+            <h3 class="signup-title">SIGN UP TO OUR MAILING LIST FOR EXCLUSIVE ACCESS TO NEWS AND EVENTS</h3>
+            <button class="signup-btn">SIGN UP</button>
+        </div>
+        
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>PaLaTyPuS</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Editorial</a></li>
+                    <li><a href="#">SoundCloud</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                    <li><a href="#">TikTok</a></li>
+                    <li><a href="#">Facebook</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>PROJECTS</h4>
+                <ul>
+                    <li><a href="#">Project 1</a></li>
+                    <li><a href="#">Project 2</a></li>
+                    <li><a href="#">Project 3</a></li>
+                    <li><a href="#">Project 4</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 30px; width: auto;">>
+            <div class="copyright">© 2025 PaLaTyPuS</div>
+        </div>
+    </div>
+
+    <script>
+        // Simple scroll-triggered animations
+        function animateOnScroll() {
+            const cards = document.querySelectorAll('.content-card');
+            
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                
+                if (isVisible) {
+                    card.classList.add('visible');
+                }
+            });
+        }
+
+        // Navigation background opacity on scroll
+        function updateNavigation() {
+            const nav = document.querySelector('.navigation-container');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                nav.style.background = 'rgba(0, 0, 0, 0.9)';
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        function setupSmoothScrolling() {
+            const archiveLink = document.querySelector('a[href="#content"]');
+            if (archiveLink) {
+                archiveLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('content').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            }
+        }
+
+        // Initialize everything
+        window.addEventListener('scroll', function() {
+            animateOnScroll();
+            updateNavigation();
+        });
+
+        window.addEventListener('load', function() {
+            setupSmoothScrolling();
+            animateOnScroll(); // Run once on load
+        });
+    </script>
+</body>
+</html>
