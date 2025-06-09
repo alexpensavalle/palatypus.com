@@ -20,7 +20,7 @@
 
         /* Navigation */
         .navigation-container {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
@@ -31,21 +31,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background 0.3s ease;
         }
 
         .logo {
             display: flex;
             align-items: center;
             text-decoration: none;
-        }
-
-        .logo-text {
-            font-family: 'Arial Black', 'Arial', sans-serif;
-            font-weight: 900;
-            font-size: 18px;
-            letter-spacing: 2px;
-            color: white;
         }
 
         .nav-links {
@@ -67,12 +58,6 @@
             opacity: 0.7;
         }
 
-        /* Navigation Buffer */
-        .navigation-buffer {
-            height: 0px;
-            background: transparent;
-        }
-
         /* Hero Section */
         .hero-wrapper {
             position: relative;
@@ -81,8 +66,6 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-top: 0;
-            padding-top: 0;
         }
 
         .hero-background {
@@ -103,18 +86,18 @@
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transition: opacity 2s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
 
         .hero-bg-image.active {
             opacity: 1;
         }
 
-        .hero-bg-image:nth-child(1) {
+        .bg-1 {
             background-image: url('./background-1.png');
         }
 
-        .hero-bg-image:nth-child(2) {
+        .bg-2 {
             background-image: url('./background-2.png');
         }
 
@@ -136,13 +119,39 @@
             padding: 0 20px;
         }
 
-        .hero-logo {
-            font-family: 'Arial Black', 'Arial', sans-serif;
-            font-weight: 900;
-            font-size: 4rem;
-            letter-spacing: 8px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+        /* Carousel Arrow Buttons */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 4;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .carousel-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-arrow.left {
+            left: 30px;
+        }
+
+        .carousel-arrow.right {
+            right: 30px;
         }
 
         .hero-tagline {
@@ -189,6 +198,7 @@
             font-size: 16px;
             opacity: 0.8;
             transition: opacity 0.3s ease;
+            cursor: pointer;
         }
 
         .archive-link:hover {
@@ -201,6 +211,32 @@
 
         .archive-link:hover .arrow {
             transform: translateX(5px);
+        }
+
+        /* Hero Logo Transitions */
+        .hero-logo-container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .hero-logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        .hero-logo.active {
+            opacity: 1;
+        }
+
+        .hero-logo:first-child {
+            position: relative;
         }
 
         /* New Music Section */
@@ -230,33 +266,18 @@
         .city-button {
             position: relative;
             height: 200px;
-            background-size: cover;
-            background-position: center;
+            background: #1DB954;
+            color: white;
             display: flex;
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
             text-decoration: none;
-            color: white;
             font-weight: bold;
             font-size: 18px;
             transition: transform 0.3s ease;
-            background-color: #333;
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7));
-        }
-
-        .city-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-        }
-
-        .city-button span {
-            position: relative;
-            z-index: 1;
+            text-align: center;
         }
 
         .city-button:hover {
@@ -272,6 +293,8 @@
             font-size: 36px;
             font-weight: bold;
             margin-bottom: 30px;
+            display: flex;
+            align-items: center;
         }
 
         .content-grid {
@@ -285,13 +308,6 @@
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .content-card.visible {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         .content-card:hover {
@@ -405,13 +421,6 @@
             align-items: center;
         }
 
-        .footer-logo {
-            font-family: 'Arial Black', 'Arial', sans-serif;
-            font-weight: 900;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
         .copyright {
             font-size: 14px;
             opacity: 0.6;
@@ -429,11 +438,6 @@
 
             .nav-link {
                 font-size: 12px;
-            }
-
-            .hero-logo {
-                font-size: 2.5rem;
-                letter-spacing: 4px;
             }
 
             .cities-section {
@@ -472,6 +476,20 @@
                 padding: 12px 25px;
                 font-size: 12px;
             }
+
+            .carousel-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .carousel-arrow.left {
+                left: 15px;
+            }
+
+            .carousel-arrow.right {
+                right: 15px;
+            }
         }
     </style>
 </head>
@@ -484,10 +502,10 @@
         
         <div class="nav-links">
             <a href="#" class="nav-link">Events</a>
-            <a href="#" class="nav-link">Video</a>
+            <a href="https://www.instagram.com/larkinsfinestliquids/" class="nav-link" target="_blank">Paintings</a>
             <a href="#" class="nav-link">Audio</a>
-            <a href="#" class="nav-link">Shop</a>
-            <a href="#" class="nav-link">Editorial</a>
+            <a href="#" class="nav-link">Blog</a>
+            <a href="https://github.com/alexpensavalle" class="nav-link" target="_blank">Code</a>
         </div>
         
         <div class="nav-links">
@@ -496,30 +514,36 @@
         </div>
     </div>
 
-    <div class="navigation-buffer"></div>
-
     <!-- Hero Section -->
     <div class="hero-wrapper">
         <div class="hero-background">
-            <div class="hero-bg-image active"></div>
-            <div class="hero-bg-image"></div>
+            <div class="hero-bg-image bg-1 active" id="bg1"></div>
+            <div class="hero-bg-image bg-2" id="bg2"></div>
         </div>
         <div class="hero-gradient"></div>
+        
+        <!-- Carousel Arrow Buttons -->
+        <button class="carousel-arrow left" onclick="previousSlide()">‹</button>
+        <button class="carousel-arrow right" onclick="nextSlide()">›</button>
+        
         <div class="hero-content">
             <div style="text-align: center; margin-bottom: 40px;">
-                <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="max-width: 600px; width: 100%; height: auto;">
-                <p class="hero-tagline">Connecting Club Culture To The World</p>
+                <div class="hero-logo-container">
+                    <img src="./palatypus-logo.png" alt="PaLaTyPuS" class="hero-logo active" id="logoWhite">
+                    <img src="./palatypus-logo-black.png" alt="PaLaTyPuS" class="hero-logo" id="logoBlack">
+                </div>
+                <p class="hero-tagline">Nature's Jack-Of-All-Trades</p>
             </div>
             
             <div class="hero-cta">
                 <button class="find-event-btn">
-                    📍 FIND AN EVENT
+                    ARE YOU EVEN REAL?
                 </button>
                 
-                <a href="#content" class="archive-link">
+                <div class="archive-link" onclick="scrollToContent()">
                     Browse the archive
                     <span class="arrow">→</span>
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -534,51 +558,51 @@
         </div>
         
         <div class="cities-grid">
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 1</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 2</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 3</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 4</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 5</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 6</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 7</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 8</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 9</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 10</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 11</span>
             </div>
-            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="city-button">
                 <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
                 <span style="font-size: 14px;">Spotify Embed 12</span>
             </div>
@@ -667,75 +691,63 @@
         </div>
         
         <div class="footer-bottom">
-            <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 30px; width: auto;">>
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 30px; width: auto;">
             <div class="copyright">© 2025 PaLaTyPuS</div>
         </div>
     </div>
 
     <script>
-        // Background image carousel
-        function startBackgroundCarousel() {
-            const images = document.querySelectorAll('.hero-bg-image');
-            let currentIndex = 0;
-            
-            setInterval(() => {
-                // Remove active class from current image
-                images[currentIndex].classList.remove('active');
-                
-                // Move to next image
-                currentIndex = (currentIndex + 1) % images.length;
-                
-                // Add active class to new current image
-                images[currentIndex].classList.add('active');
-            }, 5000); // Change image every 5 seconds
-        }
+        let currentSlide = 0;
+        let autoSlideInterval;
 
-        // Simple scroll-triggered animations
-        function animateOnScroll() {
-            const cards = document.querySelectorAll('.content-card');
-            
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-                
-                if (isVisible) {
-                    card.classList.add('visible');
-                }
-            });
-        }
+        function updateCarousel() {
+            const bg1 = document.getElementById('bg1');
+            const bg2 = document.getElementById('bg2');
+            const logoWhite = document.getElementById('logoWhite');
+            const logoBlack = document.getElementById('logoBlack');
 
-        // Navigation background opacity on scroll
-        function updateNavigation() {
-            const nav = document.querySelector('.navigation-container');
-            if (window.scrollY > 100) {
-                nav.style.background = 'rgba(0, 0, 0, 0.1)';
+            // Toggle background and logo visibility simultaneously
+            if (currentSlide === 0) {
+                bg1.classList.add('active');
+                bg2.classList.remove('active');
+                logoWhite.classList.add('active');
+                logoBlack.classList.remove('active');
             } else {
-                nav.style.background = 'transparent';
+                bg1.classList.remove('active');
+                bg2.classList.add('active');
+                logoWhite.classList.remove('active');
+                logoBlack.classList.add('active');
             }
         }
 
-        // Smooth scrolling for anchor links
-        function setupSmoothScrolling() {
-            const archiveLink = document.querySelector('a[href="#content"]');
-            if (archiveLink) {
-                archiveLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('content').scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            }
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % 2;
+            updateCarousel();
+            resetAutoSlide();
         }
 
-        // Initialize everything
-        window.addEventListener('scroll', function() {
-            animateOnScroll();
-            updateNavigation();
-        });
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + 2) % 2;
+            updateCarousel();
+            resetAutoSlide();
+        }
 
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            setTimeout(startAutoSlide, 3000);
+        }
+
+        function scrollToContent() {
+            document.getElementById('content').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Start auto-carousel when page loads
         window.addEventListener('load', function() {
-            setupSmoothScrolling();
-            animateOnScroll(); // Run once on load
+            startAutoSlide();
         });
     </script>
 </body>
