@@ -8,7 +8,7 @@
         * {
             margin: 0;
             padding: 0;
-            /* box-sizing: border-box; */
+            box-sizing: border-box;
         }
 
         body {
@@ -25,7 +25,7 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.05);
+            background: transparent;
             backdrop-filter: blur(1px);
             padding: 15px 40px;
             display: flex;
@@ -69,7 +69,8 @@
 
         /* Navigation Buffer */
         .navigation-buffer {
-            height: 70px;
+            height: 0px;
+            background: transparent;
         }
 
         /* Hero Section */
@@ -80,6 +81,8 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            margin-top: 0;
+            padding-top: 0;
         }
 
         .hero-background {
@@ -409,13 +412,6 @@
             letter-spacing: 1px;
         }
 
-        .footer-logo {
-            font-family: 'Arial Black', 'Arial', sans-serif;
-            font-weight: 900;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
         .copyright {
             font-size: 14px;
             opacity: 0.6;
@@ -483,7 +479,7 @@
     <!-- Navigation -->
     <div class="navigation-container">
         <a href="#" class="logo">
-            <img src="./PaLaTyPus-Stars.gif" alt="PaLaTyPuS" style="height: 40px; width: auto;">
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 40px; width: auto;">
         </a>
         
         <div class="nav-links">
@@ -712,9 +708,9 @@
         function updateNavigation() {
             const nav = document.querySelector('.navigation-container');
             if (window.scrollY > 100) {
-                nav.style.background = 'rgba(255, 255, 255, 0.15)';
+                nav.style.background = 'rgba(0, 0, 0, 0.1)';
             } else {
-                nav.style.background = 'rgba(255, 255, 255, 0.05)';
+                nav.style.background = 'transparent';
             }
         }
 
