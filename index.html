@@ -88,8 +88,31 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, #1a1a1a, #333);
             z-index: 1;
+        }
+
+        .hero-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .hero-bg-image.active {
+            opacity: 1;
+        }
+
+        .hero-bg-image:nth-child(1) {
+            background-image: url('./background-1.png');
+        }
+
+        .hero-bg-image:nth-child(2) {
+            background-image: url('./background-2.png');
         }
 
         .hero-gradient {
@@ -177,7 +200,7 @@
             transform: translateX(5px);
         }
 
-        /* Cities Section */
+        /* New Music Section */
         .cities-section {
             padding: 80px 40px;
         }
@@ -481,7 +504,10 @@
 
     <!-- Hero Section -->
     <div class="hero-wrapper">
-        <div class="hero-background"></div>
+        <div class="hero-background">
+            <div class="hero-bg-image active"></div>
+            <div class="hero-bg-image"></div>
+        </div>
         <div class="hero-gradient"></div>
         <div class="hero-content">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -502,59 +528,73 @@
         </div>
     </div>
 
-    <!-- Cities Section -->
+    <!-- New Music Section -->
     <div class="cities-section">
         <div class="cities-header">
-            <h3 class="cities-title">Cities</h3>
-            <a href="#" class="archive-link">
-                FIND YOUR CITY
-                <span class="arrow">→</span>
-            </a>
+            <h3 class="cities-title">New Music</h3>
+            <span class="archive-link" style="cursor: default;">
+                LISTEN NOW
+            </span>
         </div>
         
         <div class="cities-grid">
-            <a href="#" class="city-button">
-                <span>London</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>New York</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Berlin</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Los Angeles</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Amsterdam</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Paris</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Mexico City</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>São Paulo</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Barcelona</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Melbourne</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Tokyo</span>
-            </a>
-            <a href="#" class="city-button">
-                <span>Madrid</span>
-            </a>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 1</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 2</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 3</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 4</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 5</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 6</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 7</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 8</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 9</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 10</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 11</span>
+            </div>
+            <div class="city-button" style="background: #1DB954; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎵</div>
+                <span style="font-size: 14px;">Spotify Embed 12</span>
+            </div>
         </div>
     </div>
 
     <!-- Content Section -->
     <div class="content-section" id="content">
-        <h3 class="section-title">New on PaLaTyPuS</h3>
+        <h3 class="section-title">
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 36px; width: auto; vertical-align: middle; margin-right: 15px;">
+            News
+        </h3>
         <div class="content-grid">
             <div class="content-card">
                 <div class="card-image">
@@ -637,6 +677,23 @@
     </div>
 
     <script>
+        // Background image carousel
+        function startBackgroundCarousel() {
+            const images = document.querySelectorAll('.hero-bg-image');
+            let currentIndex = 0;
+            
+            setInterval(() => {
+                // Remove active class from current image
+                images[currentIndex].classList.remove('active');
+                
+                // Move to next image
+                currentIndex = (currentIndex + 1) % images.length;
+                
+                // Add active class to new current image
+                images[currentIndex].classList.add('active');
+            }, 5000); // Change image every 5 seconds
+        }
+
         // Simple scroll-triggered animations
         function animateOnScroll() {
             const cards = document.querySelectorAll('.content-card');
