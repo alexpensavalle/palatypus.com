@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PaLaTyPuS</title>
+    <title>PaLaTyPuS - Nature's Jack-Of-All-Trades</title>
+    <meta name="description" content="Discover PaLaTyPuS - experimental music, digital art, and creative content. Stream latest tracks, explore visual art, and join the community.">
     <style>
         * {
             margin: 0;
@@ -16,27 +17,46 @@
             color: white;
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Navigation */
+        /* Enhanced Typography */
+        h1, h2, h3 {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        /* Navigation with Glassmorphism */
         .navigation-container {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            background: transparent;
-            backdrop-filter: blur(1px);
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .navigation-container.scrolled {
+            background: rgba(0, 0, 0, 0.3); /* More transparent when scrolled */
+            backdrop-filter: blur(15px);
         }
 
         .logo {
             display: flex;
             align-items: center;
             text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .nav-links {
@@ -51,14 +71,36 @@
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #00ff88, #0088ff);
+            border-radius: 20px;
+            opacity: 0;
             transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-link:hover::before {
+            opacity: 0.2;
         }
 
         .nav-link:hover {
-            opacity: 0.7;
+            color: #00ff88;
+            transform: translateY(-2px);
         }
 
-        /* Hero Section */
+        /* Hero Section with Enhanced Animations */
         .hero-wrapper {
             position: relative;
             height: 100vh;
@@ -66,6 +108,8 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: #000; /* Solid background to hide video */
+            z-index: 1; /* Above video */
         }
 
         .hero-background {
@@ -74,7 +118,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 2; /* Above video but below gradient */
         }
 
         .hero-bg-image {
@@ -87,10 +131,17 @@
             background-position: center;
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
+            transform: scale(1.1);
+            animation: slowZoom 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            0% { transform: scale(1.1); }
+            100% { transform: scale(1.05); }
         }
 
         .hero-bg-image.active {
-            opacity: 1;
+            opacity: 1; /* Back to full opacity since video is masked in hero section */
         }
 
         .bg-1 {
@@ -107,43 +158,51 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7));
-            z-index: 2;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)); /* Back to original since video is masked */
+            z-index: 3; /* Above hero background */
         }
 
         .hero-content {
             position: relative;
-            z-index: 3;
+            z-index: 10; /* High z-index to stay above everything */
             text-align: center;
             max-width: 800px;
             padding: 0 20px;
+            animation: heroFadeIn 1.5s ease-out;
         }
 
-        /* Carousel Arrow Buttons */
+        @keyframes heroFadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Enhanced Carousel Arrows */
         .carousel-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             z-index: 4;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
             font-size: 24px;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             backdrop-filter: blur(10px);
         }
 
         .carousel-arrow:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
+            color: #00ff88;
             transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
         }
 
         .carousel-arrow.left {
@@ -155,54 +214,95 @@
         }
 
         .hero-tagline {
-            font-size: 16px;
+            font-size: 18px;
             opacity: 0.9;
             margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         .hero-cta {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
             align-items: center;
         }
 
+        /* Enhanced CTA Buttons */
         .find-event-btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: white;
+            gap: 12px;
+            background: linear-gradient(45deg, #00ff88, #0088ff);
             color: black;
-            padding: 15px 30px;
+            padding: 18px 36px;
             text-decoration: none;
             font-weight: bold;
             font-size: 14px;
             letter-spacing: 1px;
             text-transform: uppercase;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             border: none;
             cursor: pointer;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            min-width: 250px;
+            min-height: 44px;
+        }
+
+        .find-event-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff88, #0088ff, #ff0088, #00ff88);
+            border-radius: 32px;
+            z-index: -1;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .find-event-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
         }
 
         .archive-link {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: white;
             text-decoration: none;
             font-size: 16px;
             opacity: 0.8;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            min-height: 44px;
         }
 
         .archive-link:hover {
             opacity: 1;
+            color: #00ff88;
+            border-color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
         }
 
         .arrow {
@@ -210,7 +310,7 @@
         }
 
         .archive-link:hover .arrow {
-            transform: translateX(5px);
+            transform: translateX(8px);
         }
 
         /* Hero Logo Transitions */
@@ -229,6 +329,7 @@
             height: auto;
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
         }
 
         .hero-logo.active {
@@ -239,84 +340,125 @@
             position: relative;
         }
 
-        /* New Music Section */
+        /* Enhanced Music Section - Completely transparent for video visibility */
         .cities-section {
-            padding: 80px 40px;
+            padding: 100px 40px;
+            background: transparent; /* Completely transparent */
         }
 
         .cities-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         .cities-title {
-            font-size: 48px;
-            font-weight: bold;
+            font-size: 56px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ff88, #0088ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
         }
 
-        /* Music Embeds Container */
+        /* Enhanced Music Embeds */
         .music-embeds-container {
             width: 100%;
             margin: 0 auto;
             padding: 0 40px;
             display: grid;
             grid-template-columns: 1fr auto 1fr;
-            gap: 20px;
+            gap: 30px;
             align-items: start;
+            animation: fadeInScale 1s ease-out 0.3s both;
         }
 
-        .spotify-embed-container {
-            width: 100%;
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        .soundcloud-embed-container {
+        .spotify-embed-container, .soundcloud-embed-container {
             width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.02); /* Much more transparent */
+            backdrop-filter: blur(5px); /* Reduced blur */
+            border: 1px solid rgba(255, 255, 255, 0.05); /* More transparent border */
+        }
+
+        .spotify-embed-container:hover, .soundcloud-embed-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
         }
 
         .music-divider {
-            width: 2px;
-            height: 300px;
-            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.2), transparent);
-            margin: 26px 15px 0;
+            width: 3px;
+            height: 350px;
+            background: linear-gradient(to bottom, transparent, #00ff88, #0088ff, #00ff88, transparent);
+            margin: 26px 20px 0;
             align-self: start;
+            border-radius: 2px;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        /* Content Sections */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.1); }
+        }
+
+        /* Enhanced Content Section - More transparent */
         .content-section {
-            padding: 60px 40px;
+            padding: 80px 40px;
+            background: rgba(5, 5, 10, 0.1); /* Much more transparent */
         }
 
         .section-title {
-            font-size: 36px;
+            font-size: 42px;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             display: flex;
             align-items: center;
+            background: linear-gradient(45deg, white, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
         }
 
         .content-card {
-            background: #1a1a1a;
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); /* Much more transparent */
+            border-radius: 20px;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05); /* More transparent border */
+            backdrop-filter: blur(5px); /* Reduced blur */
         }
 
         .content-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
         }
 
         .card-image {
             width: 100%;
-            height: 200px;
-            background: #333;
+            height: 220px;
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
             background-size: cover;
             background-position: center;
             display: flex;
@@ -324,72 +466,119 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0,255,136,0.1), rgba(0,136,255,0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-card:hover .card-image::before {
+            opacity: 1;
         }
 
         .card-content {
-            padding: 20px;
+            padding: 25px;
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            color: #00ff88;
         }
 
         .card-description {
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0.8;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        /* Footer */
+        /* Enhanced Footer - More transparent */
         .footer {
-            background: #0a0a0a;
-            padding: 60px 40px 40px;
+            background: linear-gradient(180deg, rgba(5,5,10,0.1) 0%, rgba(0,0,0,0.2) 100%); /* Much more transparent */
+            padding: 80px 40px 40px;
         }
 
         .signup-section {
             text-align: center;
-            margin-bottom: 60px;
-            padding: 40px;
-            border: 1px solid #333;
+            margin-bottom: 80px;
+            padding: 50px 40px;
+            border: 2px solid rgba(0, 255, 136, 0.15); /* More transparent border */
+            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(0,255,136,0.02), rgba(0,136,255,0.02)); /* Much more transparent */
+            backdrop-filter: blur(5px); /* Reduced blur */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff88, #0088ff, #ff0088, #00ff88);
+            border-radius: 27px;
+            z-index: -1;
+            animation: gradientShift 4s ease infinite;
         }
 
         .signup-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             line-height: 1.3;
+            background: linear-gradient(45deg, white, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .signup-btn {
-            background: white;
+            background: linear-gradient(45deg, #00ff88, #0088ff);
             color: black;
-            padding: 15px 40px;
+            padding: 18px 50px;
             border: none;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px;
             letter-spacing: 1px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            border-radius: 30px;
+            min-height: 44px;
+            min-width: 200px;
         }
 
         .signup-btn:hover {
-            background: #f0f0f0;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.4);
         }
 
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
         }
 
         .footer-column h4 {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            color: #00ff88;
         }
 
         .footer-column ul {
@@ -397,24 +586,30 @@
         }
 
         .footer-column li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .footer-column a {
             color: white;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0.8;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 8px;
+            display: inline-block;
         }
 
         .footer-column a:hover {
             opacity: 1;
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateX(5px);
         }
 
         .footer-bottom {
-            border-top: 1px solid #333;
-            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 136, 0.3);
+            padding-top: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -425,7 +620,105 @@
             opacity: 0.6;
         }
 
-        /* Responsive */
+        /* Scroll Animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Background Video Container - Simplified like boilerroom.tv */
+        .bg-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind everything */
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .bg-video-container.visible {
+            opacity: 1;
+        }
+
+        /* Respect reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .bg-video-container {
+                display: none;
+            }
+        }
+
+        .bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        /* Light gradient overlay for text readability */
+        .bg-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                180deg, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0.1) 50%, 
+                rgba(0,0,0,0.4) 100%
+            );
+            pointer-events: none;
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ff88;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Responsive Design */
         @media (max-width: 768px) {
             .navigation-container {
                 padding: 15px 20px;
@@ -437,10 +730,11 @@
 
             .nav-link {
                 font-size: 12px;
+                padding: 6px 12px;
             }
 
             .cities-section {
-                padding: 40px 20px;
+                padding: 60px 20px;
             }
 
             .cities-header {
@@ -450,15 +744,24 @@
             }
 
             .cities-title {
-                font-size: 32px;
+                font-size: 36px;
             }
 
             .content-section {
-                padding: 40px 20px;
+                padding: 60px 20px;
             }
 
             .footer {
-                padding: 40px 20px;
+                padding: 60px 20px 30px;
+            }
+
+            .signup-section {
+                padding: 40px 25px;
+                margin-bottom: 60px;
+            }
+
+            .signup-title {
+                font-size: 22px;
             }
 
             .footer-bottom {
@@ -468,18 +771,19 @@
             }
 
             .hero-cta {
-                gap: 15px;
+                gap: 20px;
             }
 
             .find-event-btn {
-                padding: 12px 25px;
-                font-size: 12px;
+                padding: 16px 30px;
+                font-size: 13px;
+                min-width: 220px;
             }
 
             .carousel-arrow {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
             }
 
             .carousel-arrow.left {
@@ -490,37 +794,75 @@
                 right: 15px;
             }
 
-            /* Responsive for music embeds */
             .music-embeds-container {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 25px;
                 padding: 0 20px;
             }
             
             .music-divider {
                 display: none;
             }
+
+            .hero-tagline {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            /* Mobile video optimization */
+            .bg-video-container {
+                opacity: 0; /* Start hidden on mobile too */
+            }
+            
+            .bg-video {
+                /* Ensure video covers the viewport on mobile */
+                min-width: 100%;
+                min-height: 100%;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Background Video - Fixed position like boilerroom.tv -->
+    <div class="bg-video-container" id="bgVideoContainer">
+        <video 
+            class="bg-video" 
+            id="bgVideo"
+            playsinline 
+            autoplay 
+            muted
+            loop 
+            preload="auto">
+            <source src="palatypus-footage.mp4" type="video/mp4">
+        </video>
+        <div class="bg-video-overlay"></div>
+    </div>
+
     <!-- Navigation -->
-    <div class="navigation-container">
+    <div class="navigation-container" id="navbar">
         <a href="#" class="logo">
             <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 40px; width: auto;">
         </a>
         
         <div class="nav-links">
-            <a href="#" class="nav-link">Events</a>
-            <a href="https://www.instagram.com/larkinsfinestliquids/" class="nav-link" target="_blank">Paintings</a>
-            <a href="#" class="nav-link">Audio</a>
-            <a href="#" class="nav-link">Blog</a>
+            <a href="#music" class="nav-link">Music</a>
+            <a href="https://www.instagram.com/larkinsfinestliquids/" class="nav-link" target="_blank">Art</a>
+            <a href="#content" class="nav-link">News</a>
+            <a href="#community" class="nav-link">Community</a>
             <a href="https://github.com/alexpensavalle" class="nav-link" target="_blank">Code</a>
         </div>
         
         <div class="nav-links">
-            <a href="#" class="nav-link">Search</a>
-            <a href="#" class="nav-link">Login</a>
+            <a href="#search" class="nav-link">Search</a>
+            <a href="#signup" class="nav-link">Join</a>
         </div>
     </div>
 
@@ -533,8 +875,8 @@
         <div class="hero-gradient"></div>
         
         <!-- Carousel Arrow Buttons -->
-        <button class="carousel-arrow left" onclick="previousSlide()">‹</button>
-        <button class="carousel-arrow right" onclick="nextSlide()">›</button>
+        <button class="carousel-arrow left" onclick="previousSlide()" aria-label="Previous image">‹</button>
+        <button class="carousel-arrow right" onclick="nextSlide()" aria-label="Next image">›</button>
         
         <div class="hero-content">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -546,12 +888,12 @@
             </div>
             
             <div class="hero-cta">
-                <button class="find-event-btn">
-                    ARE YOU EVEN REAL?
+                <button class="find-event-btn" onclick="scrollToMusic()">
+                    🎵 Stream Latest Tracks + Exclusive Content
                 </button>
                 
                 <div class="archive-link" onclick="scrollToContent()">
-                    Browse the archive
+                    Explore the creative universe
                     <span class="arrow">→</span>
                 </div>
             </div>
@@ -559,11 +901,11 @@
     </div>
 
     <!-- New Music Section -->
-    <div class="cities-section">
+    <div class="cities-section scroll-reveal" id="music">
         <div class="cities-header">
-            <h3 class="cities-title">New Music</h3>
+            <h3 class="cities-title">Latest Music</h3>
             <span class="archive-link" style="cursor: default;">
-                LISTEN NOW
+                🔥 STREAMING NOW
             </span>
         </div>
         
@@ -576,7 +918,7 @@
             
             <div class="soundcloud-embed-container">
                 <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/940320025&color=%23544434&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-                <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+                <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100; padding: 10px;">
                     <a href="https://soundcloud.com/p-a-latypus" title="PaLaTyPus_" target="_blank" style="color: #cccccc; text-decoration: none;">PaLaTyPus_</a> · <a href="https://soundcloud.com/p-a-latypus/fade-to-gray" title="fade to gray (full album)" target="_blank" style="color: #cccccc; text-decoration: none;">fade to gray (full album)</a>
                 </div>
             </div>
@@ -584,39 +926,39 @@
     </div>
 
     <!-- Content Section -->
-    <div class="content-section" id="content">
+    <div class="content-section scroll-reveal" id="content">
         <h3 class="section-title">
             <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 36px; width: auto; vertical-align: middle; margin-right: 15px;">
-            News
+            Behind the Scenes
         </h3>
         <div class="content-grid">
             <div class="content-card">
                 <div class="card-image">
-                    ARTIST PHOTO
+                    🎨 STUDIO SESSIONS
                 </div>
                 <div class="card-content">
-                    <h4 class="card-title">Featured Artist 1</h4>
-                    <p class="card-description">This is where you would put a description of the artist or event. You can customize this content for your specific needs.</p>
+                    <h4 class="card-title">Creative Process Revealed</h4>
+                    <p class="card-description">Get exclusive access to studio sessions, creative breakdowns, and the stories behind each track. See how digital art and experimental sounds come together.</p>
                 </div>
             </div>
             
             <div class="content-card">
                 <div class="card-image">
-                    EVENT PHOTO
+                    ⚡ LIVE EXPERIMENTS
                 </div>
                 <div class="card-content">
-                    <h4 class="card-title">Featured Event</h4>
-                    <p class="card-description">Another content card that you can customize with your own information, images, and descriptions.</p>
+                    <h4 class="card-title">Interactive Performances</h4>
+                    <p class="card-description">Experience live coding sessions, real-time music creation, and interactive digital art performances that blur the line between artist and audience.</p>
                 </div>
             </div>
             
             <div class="content-card">
                 <div class="card-image">
-                    VENUE PHOTO
+                    🔬 TECH + ART
                 </div>
                 <div class="card-content">
-                    <h4 class="card-title">Featured Venue</h4>
-                    <p class="card-description">You can add as many of these content cards as you need for your website.</p>
+                    <h4 class="card-title">Digital Innovation</h4>
+                    <p class="card-description">Explore the intersection of technology and creativity through custom software, generative art, and experimental sound design techniques.</p>
                 </div>
             </div>
         </div>
@@ -624,49 +966,48 @@
 
     <!-- Footer -->
     <div class="footer">
-        <div class="signup-section">
-            <h3 class="signup-title">SIGN UP TO OUR MAILING LIST FOR EXCLUSIVE ACCESS TO NEWS AND EVENTS</h3>
-            <button class="signup-btn">SIGN UP</button>
+        <div class="signup-section scroll-reveal" id="signup">
+            <h3 class="signup-title">🚀 Join the PaLaTyPuS Community + Get Exclusive Content</h3>
+            <p style="margin-bottom: 25px; opacity: 0.8; font-size: 16px;">Unreleased tracks • Behind-the-scenes videos • Early access to new projects</p>
+            <button class="signup-btn" onclick="joinCommunity()">Get Free Exclusive Content</button>
         </div>
         
         <div class="footer-content">
             <div class="footer-column">
-                <h4>PaLaTyPuS</h4>
+                <h4>🎵 Music Platforms</h4>
                 <ul>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Editorial</a></li>
-                    <li><a href="#">SoundCloud</a></li>
-                    <li><a href="#">Instagram</a></li>
-                    <li><a href="#">YouTube</a></li>
-                    <li><a href="#">TikTok</a></li>
-                    <li><a href="#">Facebook</a></li>
+                    <li><a href="https://open.spotify.com/artist/4ku7ePqgfHKnfsXybAKR9Z">Spotify</a></li>
+                    <li><a href="https://soundcloud.com/p-a-latypus">SoundCloud</a></li>
+                    <li><a href="#">Apple Music</a></li>
+                    <li><a href="#">Bandcamp</a></li>
+                    <li><a href="#">YouTube Music</a></li>
                 </ul>
             </div>
             
             <div class="footer-column">
-                <h4>PROJECTS</h4>
+                <h4>🎨 Creative Work</h4>
                 <ul>
-                    <li><a href="#">Project 1</a></li>
-                    <li><a href="#">Project 2</a></li>
-                    <li><a href="#">Project 3</a></li>
-                    <li><a href="#">Project 4</a></li>
+                    <li><a href="https://www.instagram.com/larkinsfinestliquids/">Digital Art</a></li>
+                    <li><a href="https://github.com/alexpensavalle">Code Projects</a></li>
+                    <li><a href="#">Interactive Installations</a></li>
+                    <li><a href="#">Generative Art</a></li>
                 </ul>
             </div>
             
             <div class="footer-column">
-                <h4>Information</h4>
+                <h4>🌐 Connect</h4>
                 <ul>
+                    <li><a href="#">Discord Community</a></li>
+                    <li><a href="#">Newsletter</a></li>
                     <li><a href="#">Contact</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Collaborations</a></li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
             <img src="./palatypus-logo.png" alt="PaLaTyPuS" style="height: 30px; width: auto;">
-            <div class="copyright">© 2025 PaLaTyPuS</div>
+            <div class="copyright">© 2025 PaLaTyPuS - All Rights Reserved</div>
         </div>
     </div>
 
@@ -674,13 +1015,13 @@
         let currentSlide = 0;
         let autoSlideInterval;
 
+        // Enhanced carousel functionality
         function updateCarousel() {
             const bg1 = document.getElementById('bg1');
             const bg2 = document.getElementById('bg2');
             const logoWhite = document.getElementById('logoWhite');
             const logoBlack = document.getElementById('logoBlack');
 
-            // Toggle background and logo visibility simultaneously
             if (currentSlide === 0) {
                 bg1.classList.add('active');
                 bg2.classList.remove('active');
@@ -707,21 +1048,165 @@
         }
 
         function startAutoSlide() {
-            autoSlideInterval = setInterval(nextSlide, 5000);
+            autoSlideInterval = setInterval(nextSlide, 6000);
         }
 
         function resetAutoSlide() {
             clearInterval(autoSlideInterval);
-            setTimeout(startAutoSlide, 3000);
+            setTimeout(startAutoSlide, 4000);
         }
 
+        // Enhanced scroll functionality
         function scrollToContent() {
-            document.getElementById('content').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('content').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
 
-        // Start auto-carousel when page loads
-        window.addEventListener('load', function() {
+        function scrollToMusic() {
+            document.getElementById('music').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function joinCommunity() {
+            // Analytics event tracking
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'signup_click', {
+                    'event_category': 'engagement',
+                    'event_label': 'footer_cta'
+                });
+            }
+            
+            // Placeholder for actual signup implementation
+            alert('🎉 Thanks for your interest! Email signup coming soon. Follow @palatypus on social media for updates!');
+        }
+
+        // Scroll reveal animation
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.scroll-reveal');
+            
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('revealed');
+                }
+            });
+        }
+
+        // Background video fade effect
+        function handleVideoVisibility() {
+            const heroHeight = window.innerHeight;
+            const scrolled = window.pageYOffset;
+            const videoContainer = document.getElementById('bgVideoContainer');
+            
+            if (scrolled > heroHeight * 0.8) { // Start fading in when 80% of hero is scrolled
+                videoContainer.classList.add('visible');
+            } else {
+                videoContainer.classList.remove('visible');
+            }
+        }
+
+        // Navigation scroll effect
+        function handleNavScroll() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        // Loading animation
+        function hideLoader() {
+            const loader = document.getElementById('loadingOverlay');
+            loader.classList.add('hidden');
+        }
+
+        // Background video handling
+        function initializeBackgroundVideo() {
+            const video = document.getElementById('bgVideo');
+            
+            if (!video) {
+                console.log('❌ No video element found!');
+                return;
+            }
+            
+            // Handle video errors
+            video.addEventListener('error', (e) => {
+                console.log('❌ Video failed to load:', e);
+                console.log('Check if palatypus-footage.mp4 exists in the same folder as your HTML file');
+            });
+            
+            // Log when video starts playing
+            video.addEventListener('playing', () => {
+                console.log('✅ Background video is playing');
+            });
+            
+            // Try to play video
+            video.play().catch(e => {
+                console.log('⚠️ Video autoplay may be blocked by browser:', e);
+            });
+        }
+
+        // Event listeners
+        window.addEventListener('scroll', () => {
+            revealOnScroll();
+            handleNavScroll();
+            handleVideoVisibility();
+        });
+
+        window.addEventListener('load', () => {
             startAutoSlide();
+            setTimeout(hideLoader, 1000);
+            revealOnScroll();
+            initializeBackgroundVideo();
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) nextSlide();
+            if (touchEndX > touchStartX + swipeThreshold) previousSlide();
+        }
+
+        // Performance monitoring (placeholder for analytics)
+        function trackPerformance() {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'page_view', {
+                    'page_title': 'PaLaTyPuS - Home',
+                    'page_location': window.location.href
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            trackPerformance();
+            revealOnScroll();
         });
     </script>
 </body>
