@@ -1,0 +1,3084 @@
+            drawAdaptiveOscillator() {
+                const quality = this.params.renderQuality;
+                const step = Math.max(1, 5 - quality);
+                
+                // Clear with transparency for video layering
+                this.ctx.globalCompositeOperation = 'source-over';
+                this.ctx.clearRect(0, 0, this.viewport.width, this.viewport.height);
+                
+                // Set blend mode for video interaction
+                this.ctx.globalCompositeOperation = 'screen<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaLaTyPuS - Adaptive Reality Synthesis</title>
+    <meta name="description" content="PaLaTyPuS - experimental music meets adaptive live-coded visuals. Responsive synthesis engine.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00ff88;
+            --secondary-color: #0080ff;
+            --accent-color: #ff0080;
+            --bg-alpha: 0.8;
+            --border-width: 1px;
+            --text-size: 12px;
+            --spacing: 20px;
+        }
+
+        /* Screen size dependent variables */
+        @media (max-width: 480px) {
+            :root {
+                --primary-color: #ff6b35;
+                --secondary-color: #f7931e;
+                --accent-color: #ffb627;
+                --bg-alpha: 0.9;
+                --border-width: 2px;
+                --text-size: 10px;
+                --spacing: 12px;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            :root {
+                --primary-color: #6b5b95;
+                --secondary-color: #88d8c0;
+                --accent-color: #feb236;
+                --bg-alpha: 0.85;
+                --border-width: 1.5px;
+                --text-size: 11px;
+                --spacing: 16px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            :root {
+                --primary-color: #00ff88;
+                --secondary-color: #0080ff;
+                --accent-color: #ff0080;
+                --bg-alpha: 0.7;
+                --border-width: 1px;
+                --text-size: 14px;
+                --spacing: 24px;
+            }
+        }
+
+        @media (orientation: portrait) {
+            :root {
+                --primary-color: #e74c3c;
+                --secondary-color: #9b59b6;
+                --accent-color: #f39c12;
+            }
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            color: var(--primary-color);
+            background: #000;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Adaptive canvas that blends with video */
+        #visual-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            background: transparent;
+            mix-blend-mode: screen;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, mix-blend-mode 0.3s ease;
+        }
+
+        /* Background Video Layer - Now on top with transparency */
+        .bg-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            overflow: hidden;
+            opacity: 0.4;
+            transition: opacity 1s ease;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .bg-video-container.visible {
+            opacity: 0.6;
+        }
+
+        .bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: contrast(1.3) saturate(1.4) brightness(1.1);
+        }
+
+        .bg-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                180deg, 
+                rgba(0,0,0,0.1) 0%, 
+                rgba(0,0,0,0.05) 50%, 
+                rgba(0,0,0,0.15) 100%
+            );
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+
+        /* Magical Browser Objects Container */
+        .magical-objects-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Magical Object Types */
+        .magical-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent 70%);
+            backdrop-filter: blur(5px);
+            mix-blend-mode: screen;
+            animation: float-drift 8s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .magical-triangle {
+            position: absolute;
+            width: 0;
+            height: 0;
+            mix-blend-mode: screen;
+            animation: triangle-spin 12s linear infinite;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .magical-square {
+            position: absolute;
+            background: linear-gradient(45deg, transparent, var(--primary-color), transparent);
+            border: 1px solid var(--primary-color);
+            mix-blend-mode: screen;
+            animation: square-morph 6s ease-in-out infinite;
+            backdrop-filter: blur(3px);
+        }
+
+        .magical-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+            height: 1px;
+            mix-blend-mode: screen;
+            animation: line-sweep 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 5px var(--secondary-color));
+        }
+
+        .magical-spiral {
+            position: absolute;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            mix-blend-mode: screen;
+            animation: spiral-rotate 3s linear infinite;
+            backdrop-filter: blur(2px);
+        }
+
+        .magical-text {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--primary-color);
+            mix-blend-mode: screen;
+            animation: text-fade 5s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0.6;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        /* Magical Object Animations */
+        @keyframes float-drift {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% { 
+                transform: translate(30px, -20px) scale(1.2);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translate(-20px, 30px) scale(0.8);
+                opacity: 0.5;
+            }
+            75% { 
+                transform: translate(-30px, -10px) scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes triangle-spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.3); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes square-morph {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1);
+                border-radius: 0%;
+            }
+            25% { 
+                transform: rotate(45deg) scale(1.2);
+                border-radius: 25%;
+            }
+            50% { 
+                transform: rotate(90deg) scale(0.8);
+                border-radius: 50%;
+            }
+            75% { 
+                transform: rotate(135deg) scale(1.1);
+                border-radius: 25%;
+            }
+        }
+
+        @keyframes line-sweep {
+            0% { 
+                transform: translateX(-100%) scaleX(0);
+                opacity: 0;
+            }
+            50% { 
+                transform: translateX(0%) scaleX(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(100%) scaleX(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes spiral-rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.5); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes text-fade {
+            0%, 100% { 
+                opacity: 0.2;
+                transform: translateY(0px);
+            }
+            50% { 
+                opacity: 0.8;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive magical objects */
+        @media (max-width: 480px) {
+            .magical-orb {
+                width: 20px !important;
+                height: 20px !important;
+            }
+            
+            .magical-square {
+                width: 15px !important;
+                height: 15px !important;
+            }
+            
+            .magical-spiral {
+                width: 25px !important;
+                height: 25px !important;
+            }
+            
+            .magical-text {
+                font-size: 10px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .magical-orb {
+                width: 60px !important;
+                height: 60px !important;
+            }
+            
+            .magical-square {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            
+            .magical-spiral {
+                width: 80px !important;
+                height: 80px !important;
+            }
+        }
+
+        /* Interactive magical objects */
+        .magical-objects-container:hover .magical-orb {
+            animation-duration: 4s;
+        }
+
+        .magical-objects-container:hover .magical-triangle {
+            animation-duration: 6s;
+        }
+
+        .magical-objects-container:hover .magical-square {
+            animation-duration: 3s;
+        }
+
+        /* Video interaction effects */
+        .bg-video-container:hover .bg-video {
+            filter: contrast(1.3) saturate(1.5) hue-rotate(30deg);
+        }
+
+        /* Canvas blend mode variations */
+        .canvas-multiply { mix-blend-mode: multiply; }
+        .canvas-overlay { mix-blend-mode: overlay; }
+        .canvas-soft-light { mix-blend-mode: soft-light; }
+        .canvas-color-dodge { mix-blend-mode: color-dodge; }
+        .canvas-screen { mix-blend-mode: screen; }
+
+        /* Screen-size adaptive overlays */
+        .code-overlay {
+            position: fixed;
+            background: rgba(0, 0, 0, var(--bg-alpha));
+            border: var(--border-width) solid var(--primary-color);
+            border-radius: calc(var(--spacing) * 0.4);
+            padding: var(--spacing);
+            font-family: 'Courier New', monospace;
+            font-size: var(--text-size);
+            line-height: 1.4;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 0 calc(var(--spacing) * 1.5) rgba(var(--primary-color), 0.3);
+        }
+
+        /* Desktop layout */
+        @media (min-width: 769px) {
+            .code-overlay {
+                top: var(--spacing);
+                left: var(--spacing);
+                max-width: 400px;
+            }
+            
+            .code-overlay.minimized {
+                transform: translateX(-350px);
+            }
+        }
+
+        /* Tablet landscape layout */
+        @media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+            .code-overlay {
+                top: 50%;
+                right: var(--spacing);
+                transform: translateY(-50%);
+                max-width: 300px;
+            }
+            
+            .code-overlay.minimized {
+                transform: translate(250px, -50%);
+            }
+        }
+
+        /* Tablet portrait layout */
+        @media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+            .code-overlay {
+                bottom: 120px;
+                left: var(--spacing);
+                right: var(--spacing);
+                max-width: none;
+            }
+            
+            .code-overlay.minimized {
+                transform: translateY(100px);
+            }
+        }
+
+        /* Mobile layout - bottom drawer style */
+        @media (max-width: 480px) {
+            .code-overlay {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                max-width: none;
+                border-radius: calc(var(--spacing) * 0.8) calc(var(--spacing) * 0.8) 0 0;
+                border-bottom: none;
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+            
+            .code-overlay.minimized {
+                transform: translateY(calc(100% - 40px));
+            }
+        }
+
+        .code-toggle {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: var(--primary-color);
+            border: var(--border-width) solid var(--primary-color);
+            padding: calc(var(--spacing) * 0.25);
+            cursor: pointer;
+            font-size: calc(var(--text-size) * 0.8);
+            transition: all 0.3s ease;
+        }
+
+        /* Adaptive toggle positioning */
+        @media (min-width: 769px) {
+            .code-toggle {
+                right: calc(var(--spacing) * -1.5);
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 0 5px 5px 0;
+                writing-mode: vertical-rl;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .code-toggle {
+                top: calc(var(--spacing) * -1.5);
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 5px 5px 0 0;
+                writing-mode: horizontal-tb;
+            }
+        }
+
+        .live-code {
+            color: var(--primary-color);
+            margin-bottom: calc(var(--spacing) * 0.4);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+
+        .live-code.active {
+            opacity: 1;
+            color: var(--accent-color);
+            background: rgba(255, 255, 0, 0.1);
+            padding: calc(var(--spacing) * 0.1) calc(var(--spacing) * 0.2);
+            border-radius: 3px;
+            transform: scale(1.02);
+        }
+
+        /* Responsive audio visualizer */
+        .audio-viz {
+            position: fixed;
+            z-index: 100;
+            pointer-events: none;
+            display: flex;
+            align-items: flex-end;
+            gap: 1px;
+        }
+
+        /* Desktop: bottom full width */
+        @media (min-width: 769px) {
+            .audio-viz {
+                bottom: var(--spacing);
+                left: var(--spacing);
+                right: var(--spacing);
+                height: 60px;
+            }
+        }
+
+        /* Tablet landscape: vertical on left */
+        @media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+            .audio-viz {
+                left: var(--spacing);
+                top: var(--spacing);
+                bottom: var(--spacing);
+                width: 40px;
+                height: auto;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .viz-bar {
+                width: 100% !important;
+                min-height: 2px !important;
+            }
+        }
+
+        /* Mobile: top thin strip */
+        @media (max-width: 480px) {
+            .audio-viz {
+                top: var(--spacing);
+                left: var(--spacing);
+                right: var(--spacing);
+                height: 25px;
+            }
+        }
+
+        .viz-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-color), var(--secondary-color), var(--accent-color));
+            min-height: 2px;
+            border-radius: 1px;
+            transition: all 0.1s ease;
+            min-width: 2px;
+        }
+
+        /* Adaptive navigation */
+        .nav-container {
+            position: fixed;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: calc(var(--spacing) * 0.75);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-right: calc(var(--spacing) * 0.5);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 10px var(--primary-color));
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px var(--primary-color)) hue-rotate(90deg);
+        }
+
+        .logo-img {
+            height: auto;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: calc(var(--spacing) * 0.75);
+        }
+
+        /* Desktop: top right */
+        @media (min-width: 769px) {
+            .nav-container {
+                top: var(--spacing);
+                right: var(--spacing);
+                flex-direction: row;
+            }
+            
+            .logo-img {
+                width: 40px;
+            }
+        }
+
+        /* Tablet: varies by orientation */
+        @media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+            .nav-container {
+                top: var(--spacing);
+                left: 80px;
+                right: var(--spacing);
+                justify-content: center;
+            }
+            
+            .logo-img {
+                width: 35px;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+            .nav-container {
+                top: var(--spacing);
+                left: var(--spacing);
+                right: var(--spacing);
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            
+            .logo-img {
+                width: 35px;
+            }
+        }
+
+        /* Mobile: bottom fixed */
+        @media (max-width: 480px) {
+            .nav-container {
+                bottom: var(--spacing);
+                left: var(--spacing);
+                right: var(--spacing);
+                justify-content: space-between;
+                background: rgba(0, 0, 0, 0.9);
+                padding: calc(var(--spacing) * 0.5);
+                border-radius: calc(var(--spacing) * 0.5);
+                border: var(--border-width) solid var(--primary-color);
+            }
+            
+            .logo-img {
+                width: 30px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                gap: calc(var(--spacing) * 0.3);
+            }
+        }
+
+        .nav-item {
+            background: rgba(0, 0, 0, var(--bg-alpha));
+            border: var(--border-width) solid var(--primary-color);
+            color: var(--primary-color);
+            padding: calc(var(--spacing) * 0.4) calc(var(--spacing) * 0.6);
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: var(--text-size);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: calc(var(--spacing) * 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .nav-item {
+                font-size: calc(var(--text-size) * 0.8);
+                padding: calc(var(--spacing) * 0.3) calc(var(--spacing) * 0.4);
+            }
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .nav-item:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Adaptive hero section */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            padding: var(--spacing);
+            animation: heroFadeIn 2s ease-out;
+        }
+
+        @keyframes heroFadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-logo-container {
+            position: relative;
+            margin: 0 auto calc(var(--spacing) * 2);
+            display: inline-block;
+            filter: drop-shadow(0 0 30px var(--primary-color));
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        .hero-logo {
+            transition: all 1s ease-in-out;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            filter: hue-rotate(0deg) saturate(1.2);
+        }
+
+        .hero-logo.active {
+            opacity: 1;
+        }
+
+        .hero-logo:first-child {
+            position: relative;
+        }
+
+        /* Responsive hero logo sizing */
+        @media (min-width: 1200px) {
+            .hero-logo {
+                width: 400px;
+                height: auto;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .hero-logo {
+                width: 300px;
+                height: auto;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .hero-logo {
+                width: 250px;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-logo {
+                width: 200px;
+                height: auto;
+            }
+        }
+
+        .hero-tagline {
+            color: var(--primary-color);
+            font-family: 'Courier New', monospace;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: calc(var(--spacing) * 0.5);
+            opacity: 0.9;
+            animation: textGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px var(--primary-color); }
+            100% { text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--accent-color); }
+        }
+
+        .hero-subtitle {
+            color: var(--secondary-color);
+            font-family: 'Courier New', monospace;
+            margin-bottom: calc(var(--spacing) * 2);
+            opacity: 0.8;
+            animation: typewriter 3s steps(40) 1s both;
+        }
+
+        @keyframes typewriter {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        /* Parallax scrolling elements */
+        .parallax-slow {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        .parallax-medium {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        .parallax-fast {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        /* Enhanced hero section with parallax */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            padding: var(--spacing);
+            animation: heroFadeIn 2s ease-out;
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        /* Parallax background elements */
+        .parallax-bg-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .parallax-orb {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--primary-color), transparent 70%);
+            mix-blend-mode: screen;
+        }
+
+        .parallax-triangle {
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 170px solid var(--secondary-color);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+        }
+
+        .parallax-square {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, transparent, var(--accent-color), transparent);
+            border: 2px solid var(--accent-color);
+            mix-blend-mode: screen;
+            opacity: 0.2;
+        }
+        @media (min-width: 1200px) {
+            .hero-tagline { font-size: 1.4rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .hero-tagline { font-size: 1.2rem; }
+            .hero-subtitle { font-size: 1rem; }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .hero-tagline { font-size: 1rem; }
+            .hero-subtitle { font-size: 0.9rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-tagline { 
+                font-size: 0.9rem; 
+                letter-spacing: 1px;
+            }
+            .hero-subtitle { font-size: 0.8rem; }
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: calc(var(--spacing) * 1.5);
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: calc(var(--spacing) * 0.5);
+            padding: calc(var(--spacing) * 0.8) calc(var(--spacing) * 1.2);
+            border-radius: calc(var(--spacing) * 1.5);
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            min-height: 50px;
+        }
+
+        .hero-cta.primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #000;
+            border: 2px solid transparent;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-cta.secondary {
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
+            background-size: 400% 400%;
+            border-radius: calc(var(--spacing) * 1.5);
+            z-index: -1;
+            animation: border-cycle 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hero-cta:hover::before {
+            opacity: 1;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.4);
+        }
+
+        .hero-cta.primary:hover {
+            color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .cta-icon {
+            font-size: 1.2em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Mobile hero adjustments */
+        @media (max-width: 768px) {
+            .hero-actions {
+                flex-direction: column;
+                gap: var(--spacing);
+            }
+            
+            .hero-cta {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        /* Responsive content sections */
+        .content-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing);
+            backdrop-filter: blur(2px);
+        }
+
+        .content-panel {
+            background: rgba(0, 0, 0, var(--bg-alpha));
+            border: var(--border-width) solid var(--primary-color);
+            border-radius: calc(var(--spacing) * 0.6);
+            padding: var(--spacing);
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 calc(var(--spacing) * 2) rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive panel sizing */
+        @media (min-width: 1200px) {
+            .content-panel {
+                max-width: 900px;
+                width: 100%;
+                padding: calc(var(--spacing) * 2);
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .content-panel {
+                max-width: 700px;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-panel {
+                width: 100%;
+                max-width: none;
+                margin: 0 var(--spacing);
+                border-radius: calc(var(--spacing) * 0.8);
+            }
+        }
+
+        .content-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
+            background-size: 400% 400%;
+            border-radius: calc(var(--spacing) * 0.6);
+            z-index: -1;
+            animation: border-cycle 4s linear infinite;
+        }
+
+        @keyframes border-cycle {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: calc(var(--spacing) * 1.5);
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: calc(var(--spacing) * 0.75);
+            flex-wrap: wrap;
+        }
+
+        .title-logo {
+            height: auto;
+            filter: drop-shadow(0 0 15px var(--primary-color)) hue-rotate(0deg);
+            animation: logoSpin 8s linear infinite;
+            transition: all 0.3s ease;
+        }
+
+        .section-title:hover .title-logo {
+            filter: drop-shadow(0 0 25px var(--accent-color)) hue-rotate(90deg);
+            transform: scale(1.1);
+        }
+
+        @keyframes logoSpin {
+            0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
+            25% { transform: rotate(5deg); filter: hue-rotate(90deg); }
+            50% { transform: rotate(0deg); filter: hue-rotate(180deg); }
+            75% { transform: rotate(-5deg); filter: hue-rotate(270deg); }
+            100% { transform: rotate(0deg); filter: hue-rotate(360deg); }
+        }
+
+        /* Responsive title sizing and logo sizing */
+        @media (min-width: 1200px) {
+            .section-title {
+                font-size: 3rem;
+            }
+            .title-logo {
+                width: 60px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+            .title-logo {
+                width: 50px;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            .title-logo {
+                width: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.5rem;
+                margin-bottom: var(--spacing);
+                flex-direction: column;
+                gap: calc(var(--spacing) * 0.5);
+            }
+            .title-logo {
+                width: 35px;
+            }
+        }
+
+        .section-title::after {
+            content: '_';
+            animation: cursor-blink 1.5s infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .code-block {
+            background: rgba(0, 20, 0, 0.8);
+            border: var(--border-width) solid #004400;
+            border-radius: calc(var(--spacing) * 0.3);
+            padding: var(--spacing);
+            margin: var(--spacing) 0;
+            font-family: 'Courier New', monospace;
+            font-size: var(--text-size);
+            line-height: 1.6;
+            color: var(--primary-color);
+            position: relative;
+            overflow: auto;
+        }
+
+        .code-block::before {
+            content: '> ';
+            color: var(--accent-color);
+        }
+
+        /* Responsive music container */
+        .music-container {
+            display: grid;
+            gap: var(--spacing);
+            margin: var(--spacing) 0;
+        }
+
+        @media (min-width: 769px) {
+            .music-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .music-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .embed-wrapper {
+            border: var(--border-width) solid var(--primary-color);
+            border-radius: calc(var(--spacing) * 0.4);
+            overflow: hidden;
+            position: relative;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .embed-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            animation: progress-bar 3s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes progress-bar {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        /* Responsive control panel */
+        .control-panel {
+            position: fixed;
+            background: rgba(0, 0, 0, var(--bg-alpha));
+            border: var(--border-width) solid var(--primary-color);
+            border-radius: calc(var(--spacing) * 0.4);
+            padding: var(--spacing);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 1200px) {
+            .control-panel {
+                bottom: 100px;
+                right: var(--spacing);
+                width: 250px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .control-panel {
+                top: 50%;
+                right: var(--spacing);
+                transform: translateY(-50%);
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .control-panel {
+                top: var(--spacing);
+                right: var(--spacing);
+                width: 180px;
+            }
+            
+            .control-panel.minimized {
+                transform: translateX(150px);
+            }
+        }
+
+        .control-panel h4 {
+            color: var(--primary-color);
+            margin-bottom: calc(var(--spacing) * 0.75);
+            font-size: calc(var(--text-size) + 2px);
+        }
+
+        .control-slider {
+            display: flex;
+            align-items: center;
+            margin-bottom: calc(var(--spacing) * 0.5);
+            gap: calc(var(--spacing) * 0.5);
+        }
+
+        .control-slider label {
+            color: #888;
+            font-size: calc(var(--text-size) - 1px);
+            min-width: 50px;
+        }
+
+        .control-slider input[type="range"] {
+            flex: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Touch-friendly interactions for mobile */
+        @media (max-width: 768px) {
+            .control-slider input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .nav-item {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* Responsive footer section */
+        .footer-section {
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%);
+            border-top: var(--border-width) solid var(--primary-color);
+            padding: calc(var(--spacing) * 3) var(--spacing) calc(var(--spacing) * 2);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .footer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
+            background-size: 400% 100%;
+            animation: border-cycle 4s linear infinite;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-main {
+            display: grid;
+            gap: calc(var(--spacing) * 2);
+            margin-bottom: calc(var(--spacing) * 2);
+        }
+
+        @media (min-width: 769px) {
+            .footer-main {
+                grid-template-columns: 1fr 2fr;
+                align-items: start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-main {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .footer-logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: calc(var(--spacing) * 0.75);
+        }
+
+        @media (min-width: 769px) {
+            .footer-logo-section {
+                align-items: flex-start;
+            }
+        }
+
+        .footer-logo {
+            height: auto;
+            filter: drop-shadow(0 0 20px var(--primary-color));
+            animation: logoFloat 8s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px var(--accent-color)) hue-rotate(45deg);
+        }
+
+        @media (min-width: 769px) {
+            .footer-logo {
+                width: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-logo {
+                width: 60px;
+            }
+        }
+
+        .footer-tagline {
+            color: var(--primary-color);
+            font-family: 'Courier New', monospace;
+            font-size: calc(var(--text-size) + 2px);
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .footer-description {
+            color: #888;
+            font-size: var(--text-size);
+            line-height: 1.5;
+            margin: 0;
+            max-width: 300px;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: calc(var(--spacing) * 1.5);
+        }
+
+        @media (min-width: 769px) {
+            .footer-links {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-links {
+                grid-template-columns: 1fr;
+                gap: var(--spacing);
+            }
+        }
+
+        .footer-column h4 {
+            color: var(--primary-color);
+            font-family: 'Courier New', monospace;
+            font-size: calc(var(--text-size) + 1px);
+            margin-bottom: calc(var(--spacing) * 0.75);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: calc(var(--spacing) * 0.5);
+        }
+
+        .footer-column a {
+            color: #888;
+            text-decoration: none;
+            font-size: var(--text-size);
+            transition: all 0.3s ease;
+            padding: calc(var(--spacing) * 0.25) calc(var(--spacing) * 0.5);
+            border-radius: 4px;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-column a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .footer-column a:hover::before {
+            left: 100%;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: calc(var(--spacing) * 1.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            gap: var(--spacing);
+        }
+
+        @media (max-width: 768px) {
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: calc(var(--spacing) * 0.5);
+            }
+        }
+
+        .footer-copyright,
+        .footer-tech {
+            color: #666;
+            font-size: calc(var(--text-size) - 1px);
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer-tech {
+            opacity: 0.8;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        /* Cursor trail effects */
+        .cursor-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive scaling */
+        @media (max-width: 480px) {
+            .cursor-trail {
+                width: 6px;
+                height: 6px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .code-overlay, .control-panel, .nav-item {
+                backdrop-filter: blur(20px);
+            }
+        }
+
+        /* Ultra-wide screens */
+        @media (min-width: 1600px) {
+            .content-panel {
+                max-width: 1200px;
+            }
+            
+            .control-panel {
+                width: 300px;
+            }
+            
+            .code-overlay {
+                max-width: 500px;
+            }
+        }
+
+        /* Screen orientation specific styling */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .content-section {
+                min-height: auto;
+                padding: calc(var(--spacing) * 0.5);
+            }
+            
+            .section-title {
+                font-size: 1.5rem !important;
+                margin-bottom: calc(var(--spacing) * 0.5);
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (prefers-high-contrast: high) {
+            :root {
+                --primary-color: #ffffff;
+                --secondary-color: #ffffff;
+                --accent-color: #ffff00;
+                --bg-alpha: 0.95;
+            }
+        }
+
+        /* Screen reader optimizations */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Parallax Background Elements -->
+    <div class="parallax-bg-element parallax-orb parallax-slow" style="top: 20%; left: 10%;"></div>
+    <div class="parallax-bg-element parallax-triangle parallax-medium" style="top: 60%; right: 15%;"></div>
+    <div class="parallax-bg-element parallax-square parallax-fast" style="top: 80%; left: 20%;"></div>
+    <div class="parallax-bg-element parallax-orb parallax-medium" style="top: 40%; right: 25%;"></div>
+    <div class="parallax-bg-element parallax-triangle parallax-slow" style="top: 10%; right: 40%;"></div>
+    <div class="parallax-bg-element parallax-square parallax-fast" style="top: 70%; right: 5%;"></div>
+
+    <!-- Background Video Layer -->
+    <div class="bg-video-container visible" id="bgVideoContainer">
+        <video 
+            class="bg-video" 
+            id="bgVideo"
+            playsinline 
+            autoplay 
+            muted
+            loop 
+            preload="auto">
+            <source src="palatypus-footage.mp4" type="video/mp4">
+        </video>
+        <div class="bg-video-overlay"></div>
+    </div>
+
+    <!-- Magical Browser Objects Layer -->
+    <div class="magical-objects-container" id="magicalObjects" aria-hidden="true">
+        <!-- Generated dynamically -->
+    </div>
+
+    <!-- Live Visual Synthesis Canvas (layered on top) -->
+    <canvas id="visual-canvas" aria-hidden="true"></canvas>
+
+    <!-- Screen size indicator (for debugging) -->
+    <div id="screen-debug" style="position: fixed; top: 5px; left: 5px; color: var(--primary-color); font-size: 10px; z-index: 2000; opacity: 0.5;"></div>
+
+    <!-- Responsive audio visualizer -->
+    <div class="audio-viz" id="audioViz" aria-hidden="true">
+        <!-- Generated dynamically -->
+    </div>
+
+    <!-- Adaptive live coding overlay -->
+    <div class="code-overlay" id="codeOverlay" role="complementary" aria-label="Live coding display">
+        <div class="code-toggle" onclick="toggleCodeOverlay()" aria-label="Toggle code panel">CODE</div>
+        <div class="live-code" id="code0">osc(20, 0.1, 0.8).out()</div>
+        <div class="live-code" id="code1">noise(3).color(2, 0.5).out()</div>
+        <div class="live-code" id="code2">shape(6).repeat(3,2).out()</div>
+        <div class="live-code" id="code3">osc().modulate(noise(10)).out()</div>
+        <div class="live-code" id="code4">voronoi().kaleid(8).out()</div>
+        <div class="live-code" style="opacity: 0.6; font-size: 10px; margin-top: 10px;">
+            // SHORTCUTS: SPACE=cycle, R=reset<br/>
+            // F=fullscreen, C=code, V=video<br/>
+            // SCROLL=parallax, CLICK=randomize<br/>
+            // MOUSE=modulate patterns
+        </div>
+        <div class="sr-only">Live visual synthesis code display with keyboard shortcuts</div>
+    </div>
+
+    <!-- Adaptive navigation with logo -->
+    <nav class="nav-container" role="navigation" aria-label="Main navigation">
+        <a href="#hero" class="nav-logo" onclick="smoothScrollTo('hero')">
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS" class="logo-img" />
+        </a>
+        <div class="nav-links">
+            <a href="#music" class="nav-item" onclick="smoothScrollTo('music')">STREAM</a>
+            <a href="#about" class="nav-item" onclick="smoothScrollTo('about')">PROCESS</a>
+            <a href="#live" class="nav-item" onclick="smoothScrollTo('live')">LIVE</a>
+            <a href="https://www.instagram.com/larkinsfinestliquids/" class="nav-item" target="_blank" rel="noopener">VISUALS</a>
+            <a href="https://github.com/alexpensavalle" class="nav-item" target="_blank" rel="noopener">SOURCE</a>
+        </div>
+    </nav>
+
+    <!-- Responsive control panel -->
+    <div class="control-panel" id="controlPanel" role="region" aria-label="Visual controls">
+        <h4>LIVE_CONTROLS</h4>
+        <div class="control-slider">
+            <label for="freqSlider">FREQ:</label>
+            <input type="range" id="freqSlider" min="1" max="50" value="20" aria-label="Frequency control">
+        </div>
+        <div class="control-slider">
+            <label for="syncSlider">SYNC:</label>
+            <input type="range" id="syncSlider" min="0" max="2" step="0.1" value="0.1" aria-label="Sync control">
+        </div>
+        <div class="control-slider">
+            <label for="offsetSlider">OFFSET:</label>
+            <input type="range" id="offsetSlider" min="0" max="2" step="0.1" value="0.8" aria-label="Offset control">
+        </div>
+        <div class="control-slider">
+            <label for="speedSlider">SPEED:</label>
+            <input type="range" id="speedSlider" min="0.1" max="5" step="0.1" value="1" aria-label="Speed control">
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section with Adaptive Logo -->
+        <section class="hero-section" id="hero">
+            <div class="hero-content parallax-medium">
+                <div class="hero-logo-container parallax-slow">
+                    <img src="./palatypus-logo.png" alt="PaLaTyPuS" class="hero-logo active" id="logoWhite">
+                    <img src="./palatypus-logo-black.png" alt="PaLaTyPuS" class="hero-logo" id="logoBlack">
+                </div>
+                <div class="hero-tagline parallax-fast">Nature's Jack-Of-All-Trades</div>
+                <div class="hero-subtitle parallax-medium">Live-Coded Adaptive Reality Synthesis</div>
+                
+                <div class="hero-actions parallax-slow">
+                    <a href="#music" class="hero-cta primary" onclick="smoothScrollTo('music')">
+                        <span class="cta-icon">🎵</span>
+                        <span class="cta-text">Enter Synthesis</span>
+                    </a>
+                    <a href="#live" class="hero-cta secondary" onclick="smoothScrollTo('live')">
+                        <span class="cta-icon">⚡</span>
+                        <span class="cta-text">Live Code</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section parallax-medium" id="music">
+            <div class="content-panel parallax-slow">
+                <h1 class="section-title parallax-fast">PALATYPUS.INIT()</h1>
+                
+                <div class="code-block parallax-medium" role="code">
+                    <span class="sr-only">Code block:</span>
+                    // Adaptive visual synthesis engine
+                    // Responds to screen dimensions and device capabilities
+                    // Nature's jack-of-all-trades approach to responsive design
+                </div>
+
+                <div class="music-container parallax-slow">
+                    <div class="embed-wrapper">
+                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4ku7ePqgfHKnfsXybAKR9Z?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify player"></iframe>
+                    </div>
+                    
+                    <div class="embed-wrapper">
+                        <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/940320025&color=%2300ff88&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true" title="SoundCloud player"></iframe>
+                    </div>
+                </div>
+
+                <div class="code-block parallax-fast" role="code">
+                    <span class="sr-only">Code block:</span>
+                    viewport.onChange(() => {
+                        patterns.adapt(screen.dimensions);
+                        colors.shift(device.orientation);
+                        complexity.scale(pixelDensity);
+                    });
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section parallax-slow" id="about">
+            <div class="content-panel parallax-medium">
+                <h2 class="section-title parallax-fast">
+                    <img src="./palatypus-logo.png" alt="" class="title-logo parallax-slow" aria-hidden="true">
+                    ADAPTIVE.PROCESS
+                </h2>
+                
+                <div class="code-block" role="code">
+                    <span class="sr-only">Code block:</span>
+                    function createResponsiveExperience() {
+                        const context = detectEnvironment();
+                        const visuals = synthesize(context.screen, context.device);
+                        return evolve(visuals, user.interaction);
+                    }
+                </div>
+
+                <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                    This synthesis engine adapts its visual algorithms to your specific viewing environment. 
+                    Mobile devices trigger warmer color palettes and simpler geometries, while desktop 
+                    displays unlock complex multi-layered patterns. Portrait orientation shifts to 
+                    emotional color schemes, landscape enables spatial complexity.
+                </p>
+
+                <div class="code-block" role="code">
+                    <span class="sr-only">Code block:</span>
+                    screen.onResize(() => {
+                        if (mobile) patterns.simplify().colors.warm();
+                        if (tablet) layout.reflow().interactions.touch();
+                        if (desktop) complexity.increase().layers.multiply();
+                        if (ultrawide) canvas.expand().details.enhance();
+                    });
+                </div>
+
+                <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                    Each breakpoint isn't just a layout change - it's a complete aesthetic transformation. 
+                    The visual synthesis algorithms themselves morph based on available screen real estate, 
+                    pixel density, and interaction capabilities.
+                </p>
+            </div>
+        </section>
+
+        <section class="content-section parallax-medium" id="live">
+            <div class="content-panel parallax-slow">
+                <h2 class="section-title parallax-fast">
+                    <img src="./palatypus-logo.png" alt="" class="title-logo parallax-medium" aria-hidden="true">
+                    RESPONSIVE.SYNTHESIS
+                </h2>
+                
+                <div class="code-block parallax-slow" role="code">
+                    <span class="sr-only">Code block:</span>
+                    // Interactions adapt to your device:
+                    // Mobile: Touch gestures, swipe patterns
+                    // Tablet: Multi-touch, orientation changes
+                    // Desktop: Mouse tracking, keyboard shortcuts
+                    // Ultrawide: Extended spatial complexity
+                </div>
+
+                <p style="color: #888; line-height: 1.8; margin: 20px 0;" class="parallax-medium">
+                    The synthesis engine detects your environment and adapts accordingly. Small screens 
+                    prioritize focused, high-impact visuals. Large displays enable sprawling, complex 
+                    compositions. Portrait orientation triggers emotional color shifts. High-DPI displays 
+                    get enhanced detail rendering.
+                </p>
+
+                <div class="code-block parallax-fast" role="code">
+                    <span class="sr-only">Code block:</span>
+                    touch.onGesture(gesture => {
+                        if (gesture.pinch) scale.zoom(gesture.delta);
+                        if (gesture.swipe) pattern.cycle(gesture.direction);
+                        if (gesture.tap) parameters.randomize(gesture.position);
+                    });
+                </div>
+
+                <p style="color: #888; line-height: 1.8; margin: 20px 0;" class="parallax-slow">
+                    This creates a truly device-native experience where the same creative content 
+                    feels completely different on each platform - not just responsive, but genuinely 
+                    adaptive to the unique capabilities of your viewing environment.
+                </p>
+
+                <div style="text-align: center; margin-top: 40px;" class="parallax-medium">
+                    <a href="https://www.instagram.com/larkinsfinestliquids/" 
+                       style="color: var(--primary-color); text-decoration: none; border: var(--border-width) solid var(--primary-color); padding: 12px 24px; border-radius: 6px; display: inline-block; transition: all 0.3s ease;"
+                       onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'"
+                       onmouseout="this.style.backgroundColor='transparent'"
+                       target="_blank" rel="noopener">
+                        EXPLORE_ADAPTIVE_VISUALS →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section parallax-slow" id="footer">
+            <div class="footer-content parallax-medium">
+                <div class="footer-main">
+                    <div class="footer-logo-section parallax-fast">
+                        <img src="./palatypus-logo.png" alt="PaLaTyPuS" class="footer-logo">
+                        <p class="footer-tagline">Nature's Jack-Of-All-Trades</p>
+                        <p class="footer-description">Adaptive live-coded synthesis • Experimental music • Digital art</p>
+                    </div>
+                    
+                    <div class="footer-links parallax-slow">
+                        <div class="footer-column">
+                            <h4>🎵 Music Platforms</h4>
+                            <ul>
+                                <li><a href="https://open.spotify.com/artist/4ku7ePqgfHKnfsXybAKR9Z" target="_blank" rel="noopener">Spotify</a></li>
+                                <li><a href="https://soundcloud.com/p-a-latypus" target="_blank" rel="noopener">SoundCloud</a></li>
+                                <li><a href="#" target="_blank" rel="noopener">Apple Music</a></li>
+                                <li><a href="#" target="_blank" rel="noopener">Bandcamp</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="footer-column">
+                            <h4>🎨 Creative Work</h4>
+                            <ul>
+                                <li><a href="https://www.instagram.com/larkinsfinestliquids/" target="_blank" rel="noopener">Digital Art</a></li>
+                                <li><a href="https://github.com/alexpensavalle" target="_blank" rel="noopener">Code Projects</a></li>
+                                <li><a href="#live" onclick="smoothScrollTo('live')">Live Synthesis</a></li>
+                                <li><a href="#about" onclick="smoothScrollTo('about')">Process</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="footer-column">
+                            <h4>🌐 Connect</h4>
+                            <ul>
+                                <li><a href="https://www.instagram.com/larkinsfinestliquids/" target="_blank" rel="noopener">Instagram</a></li>
+                                <li><a href="https://github.com/alexpensavalle" target="_blank" rel="noopener">GitHub</a></li>
+                                <li><a href="#hero" onclick="smoothScrollTo('hero')">Home</a></li>
+                                <li><a href="#music" onclick="smoothScrollTo('music')">Music</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom parallax-fast">
+                    <div class="footer-copyright">
+                        <span>© 2025 PaLaTyPuS - Adaptive Reality Synthesis</span>
+                    </div>
+                    <div class="footer-tech">
+                        <span>Live-coded with ♡ • Hydra-inspired • Responsive by design</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Magical Browser Objects System
+        class MagicalBrowserObjects {
+            constructor(container) {
+                this.container = container;
+                this.objects = [];
+                this.maxObjects = this.getMaxObjects();
+                this.createObjects();
+                this.startAnimation();
+            }
+            
+            getMaxObjects() {
+                const width = window.innerWidth;
+                if (width <= 480) return 8;
+                if (width <= 768) return 12;
+                if (width <= 1200) return 20;
+                return 30;
+            }
+            
+            createObjects() {
+                const types = ['orb', 'triangle', 'square', 'line', 'spiral', 'text'];
+                
+                for (let i = 0; i < this.maxObjects; i++) {
+                    const type = types[Math.floor(Math.random() * types.length)];
+                    const obj = this.createMagicalObject(type);
+                    this.objects.push(obj);
+                    this.container.appendChild(obj.element);
+                }
+            }
+            
+            createMagicalObject(type) {
+                const element = document.createElement('div');
+                element.className = `magical-${type}`;
+                
+                // Random positioning
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 100);
+                element.style.left = x + 'px';
+                element.style.top = y + 'px';
+                
+                // Type-specific properties
+                switch (type) {
+                    case 'orb':
+                        const orbSize = 20 + Math.random() * 40;
+                        element.style.width = orbSize + 'px';
+                        element.style.height = orbSize + 'px';
+                        element.style.background = `radial-gradient(circle at 30% 30%, 
+                            hsla(${Math.random() * 360}, 70%, 70%, 0.8), 
+                            transparent 70%)`;
+                        break;
+                        
+                    case 'triangle':
+                        const triSize = 15 + Math.random() * 25;
+                        element.style.borderLeft = `${triSize}px solid transparent`;
+                        element.style.borderRight = `${triSize}px solid transparent`;
+                        element.style.borderBottom = `${triSize * 1.7}px solid hsl(${Math.random() * 360}, 70%, 60%)`;
+                        element.style.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                        break;
+                        
+                    case 'square':
+                        const squareSize = 15 + Math.random() * 30;
+                        element.style.width = squareSize + 'px';
+                        element.style.height = squareSize + 'px';
+                        element.style.background = `linear-gradient(45deg, 
+                            transparent, 
+                            hsl(${Math.random() * 360}, 70%, 60%), 
+                            transparent)`;
+                        element.style.border = `1px solid hsl(${Math.random() * 360}, 70%, 60%)`;
+                        break;
+                        
+                    case 'line':
+                        const lineWidth = 50 + Math.random() * 100;
+                        element.style.width = lineWidth + 'px';
+                        element.style.height = '1px';
+                        element.style.background = `linear-gradient(90deg, 
+                            transparent, 
+                            hsl(${Math.random() * 360}, 70%, 60%), 
+                            transparent)`;
+                        break;
+                        
+                    case 'spiral':
+                        const spiralSize = 20 + Math.random() * 40;
+                        element.style.width = spiralSize + 'px';
+                        element.style.height = spiralSize + 'px';
+                        element.style.border = `2px solid hsl(${Math.random() * 360}, 70%, 60%)`;
+                        element.style.borderTopColor = 'transparent';
+                        element.style.borderRightColor = 'transparent';
+                        break;
+                        
+                    case 'text':
+                        const phrases = [
+                            'osc().out()',
+                            'noise(10)',
+                            'shape()',
+                            'kaleid(8)',
+                            'rotate()',
+                            'modulate()',
+                            '> synthesis',
+                            '// live_code',
+                            'freq: ' + Math.floor(Math.random() * 50),
+                            'blend()',
+                            'feedback()',
+                            'hydra',
+                            'palatypus',
+                            'src(o0)'
+                        ];
+                        element.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+                        element.style.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                        break;
+                }
+                
+                return {
+                    element: element,
+                    type: type,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    life: Math.random() * 10000 + 5000
+                };
+            }
+            
+            updateObjects() {
+                this.objects.forEach((obj, index) => {
+                    const rect = obj.element.getBoundingClientRect();
+                    let x = parseFloat(obj.element.style.left);
+                    let y = parseFloat(obj.element.style.top);
+                    
+                    // Update position
+                    x += obj.vx;
+                    y += obj.vy;
+                    
+                    // Bounce off edges
+                    if (x <= 0 || x >= window.innerWidth - rect.width) {
+                        obj.vx *= -1;
+                    }
+                    if (y <= 0 || y >= window.innerHeight - rect.height) {
+                        obj.vy *= -1;
+                    }
+                    
+                    // Keep in bounds
+                    x = Math.max(0, Math.min(window.innerWidth - rect.width, x));
+                    y = Math.max(0, Math.min(window.innerHeight - rect.height, y));
+                    
+                    obj.element.style.left = x + 'px';
+                    obj.element.style.top = y + 'px';
+                    
+                    // Update life
+                    obj.life -= 16;
+                    
+                    // Regenerate dead objects
+                    if (obj.life <= 0) {
+                        this.container.removeChild(obj.element);
+                        const newType = ['orb', 'triangle', 'square', 'line', 'spiral', 'text'][Math.floor(Math.random() * 6)];
+                        const newObj = this.createMagicalObject(newType);
+                        this.objects[index] = newObj;
+                        this.container.appendChild(newObj.element);
+                    }
+                });
+            }
+            
+            startAnimation() {
+                setInterval(() => {
+                    this.updateObjects();
+                }, 16); // ~60fps
+            }
+            
+            adaptToScreenSize() {
+                const newMaxObjects = this.getMaxObjects();
+                
+                if (newMaxObjects > this.objects.length) {
+                    // Add more objects
+                    const types = ['orb', 'triangle', 'square', 'line', 'spiral', 'text'];
+                    for (let i = this.objects.length; i < newMaxObjects; i++) {
+                        const type = types[Math.floor(Math.random() * types.length)];
+                        const obj = this.createMagicalObject(type);
+                        this.objects.push(obj);
+                        this.container.appendChild(obj.element);
+                    }
+                } else if (newMaxObjects < this.objects.length) {
+                    // Remove excess objects
+                    for (let i = newMaxObjects; i < this.objects.length; i++) {
+                        if (this.objects[i] && this.objects[i].element) {
+                            this.container.removeChild(this.objects[i].element);
+                        }
+                    }
+                    this.objects = this.objects.slice(0, newMaxObjects);
+                }
+                
+                this.maxObjects = newMaxObjects;
+            }
+        }
+
+        // Background Video Handler
+        class BackgroundVideoHandler {
+            constructor() {
+                this.video = document.getElementById('bgVideo');
+                this.container = document.getElementById('bgVideoContainer');
+                this.initialized = false;
+                this.init();
+            }
+            
+            init() {
+                if (!this.video || !this.container) {
+                    console.log('Video elements not found');
+                    return;
+                }
+                
+                // Show video container immediately (it's now visible by default)
+                this.container.classList.add('visible');
+                
+                // Handle video events
+                this.video.addEventListener('loadeddata', () => {
+                    console.log('✅ Background video loaded');
+                });
+                
+                this.video.addEventListener('error', (e) => {
+                    console.log('❌ Video failed to load:', e);
+                    console.log('Make sure palatypus-footage.mp4 is in the same folder');
+                });
+                
+                this.video.addEventListener('playing', () => {
+                    console.log('🎬 Background video is playing');
+                    this.initialized = true;
+                });
+                
+                // Try to play
+                this.video.play().catch(e => {
+                    console.log('⚠️ Video autoplay blocked:', e);
+                    this.setupClickToPlay();
+                });
+                
+                this.initialized = true;
+            }
+            
+            show() {
+                this.container.classList.add('visible');
+            }
+            
+            hide() {
+                this.container.classList.remove('visible');
+            }
+            
+            setupClickToPlay() {
+                // Add click handler to start video on user interaction
+                document.addEventListener('click', () => {
+                    if (!this.initialized) {
+                        this.video.play().then(() => {
+                            this.show();
+                        }).catch(e => {
+                            console.log('Still unable to play video:', e);
+                        });
+                    }
+                }, { once: true });
+            }
+            
+            adaptToDevice() {
+                // Adjust video quality based on device
+                const deviceType = window.innerWidth <= 480 ? 'mobile' : 
+                                  window.innerWidth <= 768 ? 'tablet' : 'desktop';
+                
+                switch (deviceType) {
+                    case 'mobile':
+                        this.video.style.filter = 'contrast(1.1) saturate(1.0) brightness(0.9)';
+                        break;
+                    case 'tablet':
+                        this.video.style.filter = 'contrast(1.2) saturate(1.1) brightness(1.0)';
+                        break;
+                    default:
+                        this.video.style.filter = 'contrast(1.1) saturate(1.2) brightness(1.0)';
+                }
+            }
+        }
+
+        // Parallax Scrolling System
+        class ParallaxController {
+            constructor() {
+                this.elements = {
+                    slow: document.querySelectorAll('.parallax-slow'),
+                    medium: document.querySelectorAll('.parallax-medium'),
+                    fast: document.querySelectorAll('.parallax-fast')
+                };
+                this.scrollY = 0;
+                this.ticking = false;
+                this.init();
+            }
+            
+            init() {
+                window.addEventListener('scroll', () => {
+                    this.scrollY = window.scrollY;
+                    this.requestTick();
+                });
+                
+                // Initial update
+                this.updateElements();
+            }
+            
+            requestTick() {
+                if (!this.ticking) {
+                    requestAnimationFrame(() => {
+                        this.updateElements();
+                        this.ticking = false;
+                    });
+                    this.ticking = true;
+                }
+            }
+            
+            updateElements() {
+                const windowHeight = window.innerHeight;
+                
+                // Update slow elements (0.3x speed)
+                this.elements.slow.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const elementTop = rect.top + this.scrollY;
+                    const elementHeight = rect.height;
+                    
+                    // Only apply parallax if element is near viewport
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const speed = 0.3;
+                        const yPos = -(this.scrollY - elementTop) * speed;
+                        element.style.transform = `translateY(${yPos}px) translateZ(0)`;
+                    }
+                });
+                
+                // Update medium elements (0.5x speed)
+                this.elements.medium.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const elementTop = rect.top + this.scrollY;
+                    
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const speed = 0.5;
+                        const yPos = -(this.scrollY - elementTop) * speed;
+                        element.style.transform = `translateY(${yPos}px) translateZ(0)`;
+                    }
+                });
+                
+                // Update fast elements (0.8x speed)
+                this.elements.fast.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const elementTop = rect.top + this.scrollY;
+                    
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const speed = 0.8;
+                        const yPos = -(this.scrollY - elementTop) * speed;
+                        element.style.transform = `translateY(${yPos}px) translateZ(0)`;
+                    }
+                });
+                
+                // Update background elements with different speeds
+                const bgElements = document.querySelectorAll('.parallax-bg-element');
+                bgElements.forEach((element, index) => {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top < windowHeight && rect.bottom > -100) {
+                        const speed = 0.1 + (index % 3) * 0.1; // Varying speeds: 0.1, 0.2, 0.3
+                        const yPos = this.scrollY * speed;
+                        const rotation = this.scrollY * 0.05 * (index + 1);
+                        element.style.transform = `translateY(${yPos}px) rotate(${rotation}deg) translateZ(0)`;
+                    }
+                });
+                
+                // Update video based on scroll position
+                this.updateVideoEffect();
+            }
+            
+            updateVideoEffect() {
+                const videoContainer = document.getElementById('bgVideoContainer');
+                if (!videoContainer) return;
+                
+                // Change video opacity and effects based on scroll position
+                const scrollPercent = this.scrollY / (document.body.scrollHeight - window.innerHeight);
+                const newOpacity = 0.4 + (scrollPercent * 0.3); // Range: 0.4 to 0.7
+                
+                videoContainer.style.opacity = Math.min(0.8, newOpacity);
+                
+                // Add parallax effect to video
+                const video = document.getElementById('bgVideo');
+                if (video) {
+                    const videoParallax = this.scrollY * 0.2;
+                    video.style.transform = `translate(-50%, -50%) translateY(${videoParallax}px)`;
+                }
+            }
+        }
+
+        // Enhanced adaptive visual synthesis engine
+        class AdaptiveVisualSynthesis {
+            constructor() {
+                this.canvas = document.getElementById('visual-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.animationId = null;
+                
+                // Device-aware parameters
+                this.viewport = {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    aspectRatio: window.innerWidth / window.innerHeight,
+                    orientation: window.innerWidth > window.innerHeight ? 'landscape' : 'portrait',
+                    pixelRatio: window.devicePixelRatio || 1,
+                    deviceType: this.detectDeviceType()
+                };
+                
+                // Adaptive visual parameters
+                this.params = {
+                    freq: 20,
+                    sync: 0.1,
+                    offset: 0.8,
+                    speed: 1,
+                    mouseX: 0,
+                    mouseY: 0,
+                    time: 0,
+                    complexity: this.calculateComplexity(),
+                    colorMode: this.getColorMode(),
+                    renderQuality: this.getRenderQuality()
+                };
+                
+                this.currentPattern = 0;
+                this.patterns = this.getDevicePatterns();
+                
+                this.init();
+            }
+            
+            detectDeviceType() {
+                const width = window.innerWidth;
+                if (width <= 480) return 'mobile';
+                if (width <= 768) return 'tablet';
+                if (width <= 1200) return 'desktop';
+                return 'ultrawide';
+            }
+            
+            calculateComplexity() {
+                const area = this.viewport.width * this.viewport.height;
+                const pixelCount = area * this.viewport.pixelRatio;
+                
+                // Adjust complexity based on total pixels and device capability
+                if (pixelCount < 500000) return 1; // Simple
+                if (pixelCount < 2000000) return 2; // Medium
+                if (pixelCount < 5000000) return 3; // High
+                return 4; // Ultra
+            }
+            
+            getColorMode() {
+                if (this.viewport.deviceType === 'mobile') return 'warm';
+                if (this.viewport.orientation === 'portrait') return 'emotional';
+                if (this.viewport.aspectRatio > 2) return 'cool';
+                return 'standard';
+            }
+            
+            getRenderQuality() {
+                const area = this.viewport.width * this.viewport.height;
+                if (area < 400000) return 1; // Low quality for small screens
+                if (area < 1000000) return 2; // Medium quality
+                if (area < 2000000) return 3; // High quality
+                return 4; // Ultra quality for large displays
+            }
+            
+            getDevicePatterns() {
+                const base = ['oscillator', 'noise', 'shapes', 'modulation', 'voronoi'];
+                
+                switch (this.viewport.deviceType) {
+                    case 'mobile':
+                        return ['simple_osc', 'mobile_noise', 'touch_shapes'];
+                    case 'tablet':
+                        return ['tablet_osc', 'gesture_noise', 'adaptive_shapes', 'tablet_mod'];
+                    case 'ultrawide':
+                        return [...base, 'panoramic', 'multi_zone', 'spatial_complex'];
+                    default:
+                        return base;
+                }
+            }
+            
+            init() {
+                this.resizeCanvas();
+                this.setupEventListeners();
+                this.updateDebugInfo();
+                
+                // Add a small delay to ensure everything is properly initialized
+                setTimeout(() => {
+                    this.animate();
+                }, 100);
+            }
+            
+            resizeCanvas() {
+                const rect = this.canvas.getBoundingClientRect();
+                const dpr = this.viewport.pixelRatio;
+                
+                // Ensure we have valid dimensions
+                const width = Math.max(1, rect.width || window.innerWidth);
+                const height = Math.max(1, rect.height || window.innerHeight);
+                
+                // Set actual canvas size in memory (scaled up for high DPI)
+                this.canvas.width = width * dpr;
+                this.canvas.height = height * dpr;
+                
+                // Scale the drawing context to match device pixel ratio
+                this.ctx.scale(dpr, dpr);
+                
+                // Set display size (CSS pixels)
+                this.canvas.style.width = width + 'px';
+                this.canvas.style.height = height + 'px';
+                
+                // Update viewport info with validated dimensions
+                this.viewport.width = width;
+                this.viewport.height = height;
+                this.viewport.aspectRatio = width / height;
+                this.viewport.orientation = width > height ? 'landscape' : 'portrait';
+                
+                // Recalculate adaptive parameters
+                this.params.complexity = this.calculateComplexity();
+                this.params.colorMode = this.getColorMode();
+                this.params.renderQuality = this.getRenderQuality();
+                this.patterns = this.getDevicePatterns();
+                
+                console.log(`Canvas resized to: ${width}x${height}, DPR: ${dpr}`);
+            }
+            
+            setupEventListeners() {
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        const oldDeviceType = this.viewport.deviceType;
+                        this.viewport.deviceType = this.detectDeviceType();
+                        
+                        this.resizeCanvas();
+                        this.updateDebugInfo();
+                        
+                        // If device type changed, trigger adaptive UI update
+                        if (oldDeviceType !== this.viewport.deviceType) {
+                            this.adaptUI();
+                        }
+                    }, 100);
+                });
+                
+                // Device-specific event listeners
+                if (this.viewport.deviceType === 'mobile' || this.viewport.deviceType === 'tablet') {
+                    this.setupTouchEvents();
+                } else {
+                    this.setupMouseEvents();
+                }
+                
+                this.setupKeyboardEvents();
+            }
+            
+            setupTouchEvents() {
+                let lastTouch = { x: 0, y: 0 };
+                
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    lastTouch = { x: touch.clientX, y: touch.clientY };
+                    this.handleInteraction(touch.clientX, touch.clientY, 'touch');
+                });
+                
+                this.canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    this.params.mouseX = touch.clientX;
+                    this.params.mouseY = touch.clientY;
+                });
+                
+                this.canvas.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    // Gesture detection could go here
+                });
+                
+                // Pinch to zoom for pattern complexity
+                this.canvas.addEventListener('gesturechange', (e) => {
+                    e.preventDefault();
+                    this.params.complexity = Math.max(1, Math.min(4, this.params.complexity * e.scale));
+                });
+            }
+            
+            setupMouseEvents() {
+                this.canvas.addEventListener('mousemove', (e) => {
+                    this.params.mouseX = e.clientX;
+                    this.params.mouseY = e.clientY;
+                });
+                
+                this.canvas.addEventListener('click', (e) => {
+                    this.handleInteraction(e.clientX, e.clientY, 'click');
+                });
+                
+                // Removed scroll wheel control - let it scroll the page naturally
+            }
+            
+            setupKeyboardEvents() {
+                document.addEventListener('keydown', (e) => {
+                    switch (e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.currentPattern = (this.currentPattern + 1) % this.patterns.length;
+                            break;
+                        case 'KeyR':
+                            this.resetParameters();
+                            break;
+                        case 'KeyF':
+                            if (document.fullscreenElement) {
+                                document.exitFullscreen();
+                            } else {
+                                document.documentElement.requestFullscreen();
+                            }
+                            break;
+                        case 'KeyC':
+                            toggleCodeOverlay();
+                            break;
+                    }
+                });
+            }
+            
+            handleInteraction(x, y, type) {
+                // Adaptive interaction based on device
+                switch (this.viewport.deviceType) {
+                    case 'mobile':
+                        this.mobileInteraction(x, y, type);
+                        break;
+                    case 'tablet':
+                        this.tabletInteraction(x, y, type);
+                        break;
+                    default:
+                        this.desktopInteraction(x, y, type);
+                }
+            }
+            
+            mobileInteraction(x, y, type) {
+                // Simple, immediate feedback for mobile
+                this.currentPattern = Math.floor(Math.random() * this.patterns.length);
+                this.params.freq = Math.random() * 30 + 10;
+                this.params.offset = Math.random() * 2;
+            }
+            
+            tabletInteraction(x, y, type) {
+                // Medium complexity interactions
+                if (type === 'touch') {
+                    const centerX = this.viewport.width / 2;
+                    const centerY = this.viewport.height / 2;
+                    const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                    
+                    this.params.freq = (distance / this.viewport.width) * 50 + 5;
+                    this.params.sync = (y / this.viewport.height) * 2;
+                }
+            }
+            
+            desktopInteraction(x, y, type) {
+                // Complex interactions for desktop
+                if (type === 'click') {
+                    const quadrant = this.getQuadrant(x, y);
+                    switch (quadrant) {
+                        case 0: this.params.freq = Math.random() * 50 + 1; break;
+                        case 1: this.params.sync = Math.random() * 2; break;
+                        case 2: this.params.offset = Math.random() * 2; break;
+                        case 3: this.currentPattern = Math.floor(Math.random() * this.patterns.length); break;
+                    }
+                }
+            }
+            
+            getQuadrant(x, y) {
+                const midX = this.viewport.width / 2;
+                const midY = this.viewport.height / 2;
+                
+                if (x < midX && y < midY) return 0; // Top-left
+                if (x >= midX && y < midY) return 1; // Top-right
+                if (x < midX && y >= midY) return 2; // Bottom-left
+                return 3; // Bottom-right
+            }
+            
+            adaptUI() {
+                // Trigger CSS custom property updates based on device type
+                const root = document.documentElement;
+                
+                switch (this.viewport.deviceType) {
+                    case 'mobile':
+                        root.style.setProperty('--adaptive-complexity', '1');
+                        root.style.setProperty('--adaptive-spacing', '12px');
+                        break;
+                    case 'tablet':
+                        root.style.setProperty('--adaptive-complexity', '2');
+                        root.style.setProperty('--adaptive-spacing', '16px');
+                        break;
+                    case 'desktop':
+                        root.style.setProperty('--adaptive-complexity', '3');
+                        root.style.setProperty('--adaptive-spacing', '20px');
+                        break;
+                    case 'ultrawide':
+                        root.style.setProperty('--adaptive-complexity', '4');
+                        root.style.setProperty('--adaptive-spacing', '24px');
+                        break;
+                }
+            }
+            
+            updateDebugInfo() {
+                const debug = document.getElementById('screen-debug');
+                if (debug) {
+                    debug.textContent = `${this.viewport.deviceType} ${this.viewport.width}x${this.viewport.height} ${this.viewport.orientation} Q${this.params.renderQuality} C${this.params.complexity}`;
+                }
+            }
+            
+            // Adaptive rendering methods
+            drawAdaptiveOscillator() {
+                // Validate canvas dimensions before proceeding
+                if (!this.viewport.width || !this.viewport.height || 
+                    this.viewport.width <= 0 || this.viewport.height <= 0) {
+                    console.warn('Invalid canvas dimensions, skipping render');
+                    return;
+                }
+                
+                const quality = this.params.renderQuality;
+                const step = Math.max(1, 5 - quality);
+                
+                // Clear with transparency for video layering
+                this.ctx.globalCompositeOperation = 'source-over';
+                this.ctx.clearRect(0, 0, this.viewport.width, this.viewport.height);
+                
+                // Set blend mode for video interaction
+                this.ctx.globalCompositeOperation = 'screen';
+                
+                let imageData;
+                try {
+                    imageData = this.ctx.createImageData(this.viewport.width, this.viewport.height);
+                } catch (e) {
+                    console.error('Failed to create image data:', e);
+                    console.log('Canvas dimensions:', this.viewport.width, 'x', this.viewport.height);
+                    return;
+                }
+                
+                const data = imageData.data;
+                
+                for (let x = 0; x < this.viewport.width; x += step) {
+                    for (let y = 0; y < this.viewport.height; y += step) {
+                        const i = (y * this.viewport.width + x) * 4;
+                        
+                        // Skip if index is out of bounds
+                        if (i >= data.length) continue;
+                        
+                        // Adaptive oscillator complexity
+                        const wave1 = Math.sin(x * 0.01 * this.params.freq + this.params.time * this.params.speed);
+                        let wave2 = Math.cos(y * 0.01 * this.params.freq + this.params.time * this.params.speed * this.params.sync);
+                        let wave3 = Math.sin((x + y) * 0.005 * this.params.freq + this.params.time * this.params.speed + this.params.offset);
+                        
+                        // Add complexity layers based on device capability
+                        if (this.params.complexity > 1) {
+                            wave2 += Math.sin(x * 0.02 + this.params.time * 0.7) * 0.5;
+                        }
+                        if (this.params.complexity > 2) {
+                            wave3 += Math.cos(y * 0.015 + this.params.time * 1.2) * 0.3;
+                        }
+                        if (this.params.complexity > 3) {
+                            const fractal = Math.sin(x * 0.005 + y * 0.005 + this.params.time) * 0.2;
+                            wave1 += fractal;
+                        }
+                        
+                        // Mouse/touch influence
+                        const mouseInfluence = Math.sin(Math.sqrt(Math.pow(x - this.params.mouseX, 2) + Math.pow(y - this.params.mouseY, 2)) * 0.01 + this.params.time * 2);
+                        
+                        // Color mode adaptation with transparency
+                        let r, g, b, a = 180; // Semi-transparent for video layering
+                        switch (this.params.colorMode) {
+                            case 'warm':
+                                r = (wave1 + mouseInfluence) * 127 + 128;
+                                g = (wave2 + mouseInfluence) * 80 + 100;
+                                b = (wave3 + mouseInfluence) * 40 + 60;
+                                break;
+                            case 'cool':
+                                r = (wave1 + mouseInfluence) * 40 + 60;
+                                g = (wave2 + mouseInfluence) * 100 + 128;
+                                b = (wave3 + mouseInfluence) * 127 + 128;
+                                break;
+                            case 'emotional':
+                                r = (wave1 + mouseInfluence) * 100 + 155;
+                                g = (wave2 + mouseInfluence) * 60 + 80;
+                                b = (wave3 + mouseInfluence) * 120 + 135;
+                                break;
+                            default:
+                                r = (wave1 + mouseInfluence) * 127 + 128;
+                                g = (wave2 + mouseInfluence) * 127 + 128;
+                                b = (wave3 + mouseInfluence) * 127 + 128;
+                        }
+                        
+                        data[i] = Math.max(0, Math.min(255, r));
+                        data[i + 1] = Math.max(0, Math.min(255, g));
+                        data[i + 2] = Math.max(0, Math.min(255, b));
+                        data[i + 3] = a;
+                        
+                        // Fill in the step area for lower quality rendering
+                        if (step > 1) {
+                            for (let dx = 0; dx < step && x + dx < this.viewport.width; dx++) {
+                                for (let dy = 0; dy < step && y + dy < this.viewport.height; dy++) {
+                                    const fillI = ((y + dy) * this.viewport.width + (x + dx)) * 4;
+                                    if (fillI < data.length) {
+                                        data[fillI] = Math.max(0, Math.min(255, r));
+                                        data[fillI + 1] = Math.max(0, Math.min(255, g));
+                                        data[fillI + 2] = Math.max(0, Math.min(255, b));
+                                        data[fillI + 3] = a;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                try {
+                    this.ctx.putImageData(imageData, 0, 0);
+                } catch (e) {
+                    console.error('Failed to put image data:', e);
+                }
+            }
+            
+            drawAdaptiveShapes() {
+                // Validate canvas dimensions before proceeding
+                if (!this.viewport.width || !this.viewport.height || 
+                    this.viewport.width <= 0 || this.viewport.height <= 0) {
+                    console.warn('Invalid canvas dimensions, skipping shapes render');
+                    return;
+                }
+                
+                // Clear with transparency
+                this.ctx.globalCompositeOperation = 'source-over';
+                this.ctx.clearRect(0, 0, this.viewport.width, this.viewport.height);
+                
+                // Adaptive shape complexity and count
+                const baseCount = Math.min(10, Math.max(3, Math.floor(this.params.complexity * 2.5)));
+                const repeatX = this.viewport.aspectRatio > 1.5 ? Math.floor(baseCount * 1.5) : baseCount;
+                const repeatY = baseCount;
+                
+                for (let rx = 0; rx < repeatX; rx++) {
+                    for (let ry = 0; ry < repeatY; ry++) {
+                        const x = (this.viewport.width / repeatX) * rx + (this.viewport.width / repeatX) / 2;
+                        const y = (this.viewport.height / repeatY) * ry + (this.viewport.height / repeatY) / 2;
+                        
+                        // Adaptive sizing based on screen size
+                        const baseRadius = Math.min(this.viewport.width, this.viewport.height) * 0.02;
+                        const radius = baseRadius + Math.sin(this.params.time * this.params.speed + rx + ry) * (baseRadius * 0.5);
+                        const rotation = this.params.time * this.params.speed * 0.5 + rx * 0.5;
+                        
+                        // Adaptive side count based on complexity
+                        const sides = Math.max(3, Math.min(12, 3 + this.params.complexity));
+                        
+                        this.ctx.save();
+                        this.ctx.translate(x, y);
+                        this.ctx.rotate(rotation);
+                        
+                        this.ctx.beginPath();
+                        for (let i = 0; i < sides; i++) {
+                            const angle = (i * 2 * Math.PI) / sides;
+                            const px = Math.cos(angle) * radius;
+                            const py = Math.sin(angle) * radius;
+                            if (i === 0) this.ctx.moveTo(px, py);
+                            else this.ctx.lineTo(px, py);
+                        }
+                        this.ctx.closePath();
+                        
+                        // Adaptive coloring with transparency
+                        let hue;
+                        switch (this.params.colorMode) {
+                            case 'warm':
+                                hue = (this.params.time * 20 + rx * 30 + ry * 60) % 60 + 300;
+                                break;
+                            case 'cool':
+                                hue = (this.params.time * 20 + rx * 30 + ry * 60) % 120 + 180;
+                                break;
+                            case 'emotional':
+                                hue = (this.params.time * 40 + rx * 45 + ry * 90) % 60 + 270;
+                                break;
+                            default:
+                                hue = (this.params.time * 30 + rx * 60 + ry * 120 + this.params.mouseX * 0.1) % 360;
+                        }
+                        
+                        this.ctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.8)`;
+                        this.ctx.lineWidth = Math.max(1, this.params.renderQuality);
+                        this.ctx.stroke();
+                        
+                        // Add fill for higher complexity with transparency
+                        if (this.params.complexity > 2) {
+                            this.ctx.fillStyle = `hsla(${hue}, 60%, 40%, 0.3)`;
+                            this.ctx.fill();
+                        }
+                        
+                        this.ctx.restore();
+                    }
+                }
+            }
+            
+            animate() {
+                this.params.time += 0.016 * this.params.speed;
+                
+                // Clear with adaptive method
+                if (this.params.renderQuality > 2) {
+                    this.ctx.clearRect(0, 0, this.viewport.width, this.viewport.height);
+                } else {
+                    // Faster clear for low-end devices
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.fillRect(0, 0, this.viewport.width, this.viewport.height);
+                }
+                
+                // Render current pattern with adaptive quality and transparency
+                const currentPatternName = this.patterns[this.currentPattern] || 'oscillator';
+                
+                // Cycle through canvas blend modes for variety
+                const blendModes = ['screen', 'overlay', 'soft-light', 'color-dodge', 'multiply'];
+                const blendMode = blendModes[Math.floor(this.params.time * 0.1) % blendModes.length];
+                this.canvas.className = `canvas-${blendMode.replace('-', '-')}`;
+                
+                switch (currentPatternName) {
+                    case 'simple_osc':
+                    case 'tablet_osc':
+                    case 'oscillator':
+                        this.drawAdaptiveOscillator();
+                        break;
+                    case 'adaptive_shapes':
+                    case 'touch_shapes':
+                    case 'shapes':
+                        this.drawAdaptiveShapes();
+                        break;
+                    // Add more adaptive patterns here
+                    default:
+                        this.drawAdaptiveOscillator();
+                }
+                
+                this.updateLiveCodeDisplay();
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            updateLiveCodeDisplay() {
+                const codeElements = document.querySelectorAll('.live-code');
+                codeElements.forEach((el, index) => {
+                    el.classList.remove('active');
+                });
+                
+                const activeIndex = Math.floor(this.params.time * 0.5) % codeElements.length;
+                if (codeElements[activeIndex]) {
+                    codeElements[activeIndex].classList.add('active');
+                }
+                
+                // Update hero logo based on current pattern and colors
+                this.updateHeroLogo();
+            }
+            
+            updateHeroLogo() {
+                const logoWhite = document.getElementById('logoWhite');
+                const logoBlack = document.getElementById('logoBlack');
+                
+                if (!logoWhite || !logoBlack) return;
+                
+                // Switch logo based on color mode and pattern intensity
+                const shouldUseDarkLogo = this.params.colorMode === 'warm' || 
+                    (this.currentPattern === 0 && this.params.freq > 30) ||
+                    (this.params.mouseX / this.viewport.width > 0.7);
+                
+                if (shouldUseDarkLogo) {
+                    logoWhite.classList.remove('active');
+                    logoBlack.classList.add('active');
+                } else {
+                    logoWhite.classList.add('active');
+                    logoBlack.classList.remove('active');
+                }
+            }
+            
+            resetParameters() {
+                this.params.freq = 20;
+                this.params.sync = 0.1;
+                this.params.offset = 0.8;
+                this.params.speed = 1;
+                
+                // Update UI controls
+                const sliders = ['freqSlider', 'syncSlider', 'offsetSlider', 'speedSlider'];
+                sliders.forEach((id, index) => {
+                    const slider = document.getElementById(id);
+                    if (slider) {
+                        slider.value = [20, 0.1, 0.8, 1][index];
+                    }
+                });
+            }
+        }
+        
+        // Audio visualization with adaptive complexity
+        function setupAdaptiveAudioViz() {
+            const audioViz = document.getElementById('audioViz');
+            const deviceType = window.innerWidth <= 480 ? 'mobile' : 
+                              window.innerWidth <= 768 ? 'tablet' : 'desktop';
+            
+            // Adaptive bar count based on screen size and performance
+            let numBars;
+            switch (deviceType) {
+                case 'mobile': numBars = 32; break;
+                case 'tablet': numBars = 48; break;
+                default: numBars = 64;
+            }
+            
+            // Clear existing bars
+            audioViz.innerHTML = '';
+            
+            for (let i = 0; i < numBars; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'viz-bar';
+                audioViz.appendChild(bar);
+            }
+            
+            // Adaptive animation frequency
+            const animationInterval = deviceType === 'mobile' ? 100 : 50;
+            
+            setInterval(() => {
+                const bars = audioViz.querySelectorAll('.viz-bar');
+                bars.forEach((bar, index) => {
+                    const height = Math.sin(Date.now() * 0.002 + index * 0.2) * 30 + 10;
+                    bar.style.height = Math.max(2, height) + 'px';
+                });
+            }, animationInterval);
+        }
+        
+        // Adaptive cursor trail
+        function setupAdaptiveCursorTrail() {
+            const trails = [];
+            const deviceType = window.innerWidth <= 768 ? 'touch' : 'mouse';
+            const maxTrails = deviceType === 'touch' ? 10 : 20;
+            
+            const eventType = deviceType === 'touch' ? 'touchmove' : 'mousemove';
+            
+            document.addEventListener(eventType, (e) => {
+                const x = e.clientX || (e.touches && e.touches[0].clientX);
+                const y = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (!x || !y) return;
+                
+                // Create trail dot
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = x + 'px';
+                trail.style.top = y + 'px';
+                document.body.appendChild(trail);
+                
+                trails.push(trail);
+                
+                // Remove old trails
+                if (trails.length > maxTrails) {
+                    const oldTrail = trails.shift();
+                    if (oldTrail && oldTrail.parentNode) {
+                        oldTrail.parentNode.removeChild(oldTrail);
+                    }
+                }
+                
+                // Fade out trail
+                setTimeout(() => {
+                    if (trail && trail.parentNode) {
+                        trail.style.opacity = '0';
+                        trail.style.transform = 'scale(0)';
+                        setTimeout(() => {
+                            if (trail.parentNode) {
+                                trail.parentNode.removeChild(trail);
+                            }
+                        }, 300);
+                    }
+                }, deviceType === 'touch' ? 200 : 100);
+            });
+        }
+        
+        // Global functions
+        function toggleCodeOverlay() {
+            const overlay = document.getElementById('codeOverlay');
+            overlay.classList.toggle('minimized');
+        }
+        
+        function smoothScrollTo(targetId) {
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+        
+        function setupAdaptiveControls(visualEngine) {
+            if (!visualEngine) {
+                console.warn('Visual engine not ready for controls setup');
+                return;
+            }
+            
+            const controls = ['freqSlider', 'syncSlider', 'offsetSlider', 'speedSlider'];
+            
+            controls.forEach((id) => {
+                const slider = document.getElementById(id);
+                if (slider) {
+                    slider.addEventListener('input', (e) => {
+                        const param = id.replace('Slider', '').toLowerCase();
+                        if (param === 'freq') {
+                            visualEngine.params.freq = parseFloat(e.target.value);
+                        } else if (param === 'sync') {
+                            visualEngine.params.sync = parseFloat(e.target.value);
+                        } else if (param === 'offset') {
+                            visualEngine.params.offset = parseFloat(e.target.value);
+                        } else if (param === 'speed') {
+                            visualEngine.params.speed = parseFloat(e.target.value);
+                        }
+                    });
+                }
+            });
+        }
+        
+        // Initialize everything
+        let visualEngine;
+        let magicalObjects;
+        let backgroundVideo;
+        let parallaxController;
+        
+        function init() {
+            console.log('🚀 Initializing PaLaTyPuS experience...');
+            
+            // Initialize background video first
+            backgroundVideo = new BackgroundVideoHandler();
+            
+            // Initialize parallax scrolling
+            parallaxController = new ParallaxController();
+            
+            // Initialize magical objects
+            const magicalContainer = document.getElementById('magicalObjects');
+            if (magicalContainer) {
+                magicalObjects = new MagicalBrowserObjects(magicalContainer);
+            }
+            
+            // Initialize visual synthesis engine with delay to ensure canvas is ready
+            setTimeout(() => {
+                try {
+                    visualEngine = new AdaptiveVisualSynthesis();
+                    console.log('✅ Visual synthesis engine initialized');
+                } catch (error) {
+                    console.error('❌ Failed to initialize visual engine:', error);
+                    // Retry after a longer delay
+                    setTimeout(() => {
+                        try {
+                            visualEngine = new AdaptiveVisualSynthesis();
+                            console.log('✅ Visual synthesis engine initialized (retry)');
+                        } catch (retryError) {
+                            console.error('❌ Failed to initialize visual engine on retry:', retryError);
+                        }
+                    }, 1000);
+                }
+            }, 200);
+            
+            // Setup other systems
+            setupAdaptiveAudioViz();
+            setupAdaptiveCursorTrail();
+            
+            // Setup controls with delay to ensure visualEngine is ready
+            setTimeout(() => {
+                if (visualEngine) {
+                    setupAdaptiveControls(visualEngine);
+                }
+            }, 500);
+        }
+        
+        // Event listeners
+        window.addEventListener('load', init);
+        
+        // Reinitialize on significant viewport changes
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // Check if device type actually changed
+                const newDeviceType = window.innerWidth <= 480 ? 'mobile' : 
+                                    window.innerWidth <= 768 ? 'tablet' : 
+                                    window.innerWidth <= 1200 ? 'desktop' : 'ultrawide';
+                
+                if (visualEngine && newDeviceType !== visualEngine.viewport.deviceType) {
+                    // Reinitialize audio viz for new device type
+                    setupAdaptiveAudioViz();
+                    
+                    // Update magical objects for new screen size
+                    if (magicalObjects) {
+                        magicalObjects.adaptToScreenSize();
+                    }
+                    
+                    // Update background video settings
+                    if (backgroundVideo) {
+                        backgroundVideo.adaptToDevice();
+                    }
+                }
+            }, 250);
+        });
+        
+        // Orientation change handling
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                if (visualEngine) {
+                    visualEngine.resizeCanvas();
+                    visualEngine.adaptUI();
+                    setupAdaptiveAudioViz();
+                }
+                
+                if (magicalObjects) {
+                    magicalObjects.adaptToScreenSize();
+                }
+                
+                if (backgroundVideo) {
+                    backgroundVideo.adaptToDevice();
+                }
+            }, 500); // Delay to allow for orientation change to complete
+        });
+        
+        // Add keyboard shortcut to toggle video
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyV' && backgroundVideo) {
+                if (backgroundVideo.container.classList.contains('visible')) {
+                    backgroundVideo.hide();
+                } else {
+                    backgroundVideo.show();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

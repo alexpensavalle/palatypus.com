@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaLaTyPuS - Nature's Jack-Of-All-Trades</title>
+    <meta name="description" content="Discover PaLaTyPuS - experimental music, digital art, and creative content. Stream latest tracks, explore visual art, and join the community.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00ff88;
+            --secondary-color: #0080ff;
+            --accent-color: #ff0080;
+            --bg-dark: rgba(0, 0, 0, 0.8);
+            --bg-light: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(0, 255, 136, 0.3);
+            --text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        /* Responsive color schemes */
+        @media (max-width: 480px) {
+            :root {
+                --primary-color: #ff6b35;
+                --secondary-color: #f7931e;
+                --accent-color: #ffb627;
+            }
+        }
+
+        @media (orientation: portrait) {
+            :root {
+                --primary-color: #e74c3c;
+                --secondary-color: #9b59b6;
+                --accent-color: #f39c12;
+            }
+        }
+
+        body {
+            background-color: #000;
+            color: white;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Fixed Background Layers */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+        }
+
+        .visual-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.4;
+            mix-blend-mode: screen;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-layer.visible {
+            opacity: 0.6;
+        }
+
+        .bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.2) saturate(1.3);
+        }
+
+        .magical-objects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Subtle parallax elements */
+        .parallax-bg {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .parallax-orb {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30%, var(--primary-color), transparent);
+        }
+
+        .parallax-triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 80px solid var(--secondary-color);
+        }
+
+        /* Navigation */
+        .navigation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--bg-dark);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo img {
+            height: 40px;
+            filter: drop-shadow(var(--text-shadow));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-light);
+            text-shadow: var(--text-shadow);
+        }
+
+        /* Live Code Overlay */
+        .code-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            max-width: 350px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 11px;
+            backdrop-filter: blur(15px);
+            z-index: 1001;
+            transition: transform 0.3s ease;
+        }
+
+        .code-overlay.minimized {
+            transform: translateX(-320px);
+        }
+
+        .code-toggle {
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-dark);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            font-size: 9px;
+            writing-mode: vertical-rl;
+        }
+
+        .live-code {
+            color: var(--primary-color);
+            margin-bottom: 6px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .live-code.active {
+            opacity: 1;
+            color: var(--accent-color);
+            text-shadow: var(--text-shadow);
+        }
+
+        /* Controls */
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            backdrop-filter: blur(15px);
+            z-index: 1001;
+            min-width: 200px;
+        }
+
+        .control-panel h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .control-slider {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .control-slider label {
+            color: #aaa;
+            font-size: 10px;
+            min-width: 45px;
+        }
+
+        .control-slider input[type="range"] {
+            flex: 1;
+            height: 3px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Audio Visualizer */
+        .audio-viz {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 220px;
+            height: 40px;
+            display: flex;
+            align-items: flex-end;
+            gap: 1px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .viz-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+            min-height: 2px;
+            border-radius: 1px;
+            transition: height 0.1s ease;
+        }
+
+        /* Main Content - Keep Original Layout Flow */
+        .main-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero Section */
+        .hero-wrapper {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 40px;
+        }
+
+        .hero-logo-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .hero-logo {
+            width: 300px;
+            height: auto;
+            filter: drop-shadow(0 0 30px var(--primary-color));
+            transition: all 1s ease;
+            opacity: 0;
+        }
+
+        .hero-logo.active {
+            opacity: 1;
+        }
+
+        .hero-logo:first-child {
+            position: relative;
+        }
+
+        .hero-logo:not(:first-child) {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .hero-tagline {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-shadow: var(--text-shadow);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #000;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        /* Content Sections */
+        .content-section {
+            min-height: 100vh;
+            padding: 100px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-panel {
+            max-width: 800px;
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .section-title img {
+            height: 40px;
+            filter: drop-shadow(var(--text-shadow));
+        }
+
+        .code-block {
+            background: rgba(0, 20, 0, 0.5);
+            border: 1px solid #004400;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: var(--primary-color);
+        }
+
+        .code-block::before {
+            content: '> ';
+            color: var(--accent-color);
+        }
+
+        /* Music Section */
+        .music-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .embed-wrapper {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(180deg, transparent, var(--bg-dark));
+            padding: 80px 40px 40px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo-section {
+            text-align: center;
+        }
+
+        .footer-logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(var(--text-shadow));
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .footer-column h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .footer-column a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navigation-container {
+                padding: 10px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .hero-logo {
+                width: 200px;
+            }
+
+            .music-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-links {
+                grid-template-columns: 1fr;
+            }
+
+            .code-overlay {
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+
+            .control-panel {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .audio-viz {
+                bottom: 80px;
+                right: 10px;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Magical objects */
+        .magical-object {
+            position: absolute;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            opacity: 0.6;
+        }
+
+        .magical-orb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30%, var(--primary-color), transparent);
+        }
+
+        .magical-triangle {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 15px solid var(--secondary-color);
+        }
+
+        .magical-square {
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--accent-color);
+            background: linear-gradient(45deg, transparent, var(--accent-color), transparent);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .magical-object {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .magical-triangle {
+            animation: spin 8s linear infinite;
+        }
+
+        .magical-square {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            .video-layer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Background Layers -->
+    <div class="background-container">
+        <!-- Subtle parallax background elements -->
+        <div class="parallax-bg parallax-orb" style="top: 20%; left: 10%;"></div>
+        <div class="parallax-bg parallax-triangle" style="top: 60%; right: 15%;"></div>
+        <div class="parallax-bg parallax-orb" style="top: 80%; left: 60%;"></div>
+
+        <!-- Live visual synthesis canvas -->
+        <canvas class="visual-canvas" id="visualCanvas"></canvas>
+
+        <!-- Background video layer -->
+        <div class="video-layer visible" id="videoLayer">
+            <video class="bg-video" id="bgVideo" playsinline autoplay muted loop preload="auto">
+                <source src="palatypus-footage.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <!-- Magical floating objects -->
+        <div class="magical-objects" id="magicalObjects"></div>
+    </div>
+
+    <!-- UI Overlays -->
+    <div class="code-overlay" id="codeOverlay">
+        <div class="code-toggle" onclick="toggleCodeOverlay()">CODE</div>
+        <div class="live-code" id="code0">osc(20, 0.1, 0.8).out()</div>
+        <div class="live-code" id="code1">noise(3).color(2, 0.5).out()</div>
+        <div class="live-code" id="code2">shape(6).repeat(3,2).out()</div>
+        <div class="live-code" id="code3">osc().modulate(noise(10)).out()</div>
+        <div class="live-code" id="code4">voronoi().kaleid(8).out()</div>
+        <div style="font-size: 9px; opacity: 0.6; margin-top: 8px;">
+            SPACE=cycle • R=reset • V=video • C=code
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <h4>LIVE CONTROLS</h4>
+        <div class="control-slider">
+            <label>FREQ:</label>
+            <input type="range" id="freqSlider" min="1" max="50" value="20">
+        </div>
+        <div class="control-slider">
+            <label>SYNC:</label>
+            <input type="range" id="syncSlider" min="0" max="2" step="0.1" value="0.1">
+        </div>
+        <div class="control-slider">
+            <label>OFFSET:</label>
+            <input type="range" id="offsetSlider" min="0" max="2" step="0.1" value="0.8">
+        </div>
+        <div class="control-slider">
+            <label>SPEED:</label>
+            <input type="range" id="speedSlider" min="0.1" max="5" step="0.1" value="1">
+        </div>
+    </div>
+
+    <!-- Audio Visualizer -->
+    <div class="audio-viz" id="audioViz"></div>
+
+    <!-- Navigation -->
+    <nav class="navigation-container">
+        <a href="#hero" class="logo">
+            <img src="./palatypus-logo.png" alt="PaLaTyPuS">
+        </a>
+        <div class="nav-links">
+            <a href="#music" class="nav-link">Stream</a>
+            <a href="#about" class="nav-link">Process</a>
+            <a href="#live" class="nav-link">Live</a>
+            <a href="https://www.instagram.com/larkinsfinestliquids/" class="nav-link" target="_blank">Visuals</a>
+            <a href="https://github.com/alexpensavalle" class="nav-link" target="_blank">Source</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-wrapper" id="hero">
+            <div class="hero-content">
+                <div class="hero-logo-container">
+                    <img src="./palatypus-logo.png" alt="PaLaTyPuS" class="hero-logo active" id="logoWhite">
+                    <img src="./palatypus-logo-black.png" alt="PaLaTyPuS" class="hero-logo" id="logoBlack">
+                </div>
+                <p class="hero-tagline">Nature's Jack-Of-All-Trades</p>
+                <div class="hero-cta">
+                    <a href="#music" class="cta-button">
+                        🎵 Stream Latest Tracks
+                    </a>
+                    <a href="#live" class="cta-button secondary">
+                        ⚡ Live Code
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Music Section -->
+        <section class="content-section" id="music">
+            <div class="content-panel">
+                <h2 class="section-title">
+                    <img src="./palatypus-logo.png" alt="">
+                    MUSIC
+                </h2>
+                
+                <div class="code-block">
+                    // Live-coded experimental music synthesis
+                    // Real-time audio-reactive visuals
+                    // Nature's jack-of-all-trades approach
+                </div>
+
+                <div class="music-container">
+                    <div class="embed-wrapper">
+                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4ku7ePqgfHKnfsXybAKR9Z?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+                    
+                    <div class="embed-wrapper">
+                        <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/940320025&color=%2300ff88&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="content-section" id="about">
+            <div class="content-panel">
+                <h2 class="section-title">
+                    <img src="./palatypus-logo.png" alt="">
+                    PROCESS
+                </h2>
+                
+                <div class="code-block">
+                    function createExperience() {
+                        const music = synthesize(chaos, order);
+                        const visuals = modulate(reality, perception);
+                        return blend(music, visuals, consciousness);
+                    }
+                </div>
+
+                <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                    PaLaTyPuS operates at the intersection of experimental music and live-coded visuals. 
+                    Each composition emerges from real-time synthesis, where algorithmic processes 
+                    generate both sonic and visual patterns that evolve together.
+                </p>
+
+                <div class="code-block">
+                    osc(20, () => time * 0.1).kaleid(8)
+                        .modulateRotate(noise(3), 0.5)
+                        .color(2, 0.5, () => mouse.x)
+                        .out()
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Section -->
+        <section class="content-section" id="live">
+            <div class="content-panel">
+                <h2 class="section-title">
+                    <img src="./palatypus-logo.png" alt="">
+                    LIVE CODE
+                </h2>
+                
+                <div class="code-block">
+                    // Interactive visual synthesis
+                    // Mouse movement modulates parameters
+                    // Keyboard shortcuts control patterns
+                    // Real-time collaborative coding environment
+                </div>
+
+                <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                    This environment supports real-time visual coding inspired by Hydra video synthesis. 
+                    The background responds to your interactions and continuously generates new patterns 
+                    based on modular synthesis principles.
+                </p>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://www.instagram.com/larkinsfinestliquids/" 
+                       class="cta-button" target="_blank">
+                        View Visual Archive →
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo-section">
+                <img src="./palatypus-logo.png" alt="PaLaTyPuS" class="footer-logo">
+                <p style="color: var(--primary-color); margin-bottom: 10px;">Nature's Jack-Of-All-Trades</p>
+                <p style="color: #888; font-size: 12px;">Experimental music • Digital art • Live coding</p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>🎵 Music</h4>
+                    <a href="https://open.spotify.com/artist/4ku7ePqgfHKnfsXybAKR9Z">Spotify</a>
+                    <a href="https://soundcloud.com/p-a-latypus">SoundCloud</a>
+                    <a href="#">Apple Music</a>
+                    <a href="#">Bandcamp</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>🎨 Creative</h4>
+                    <a href="https://www.instagram.com/larkinsfinestliquids/">Digital Art</a>
+                    <a href="https://github.com/alexpensavalle">Code Projects</a>
+                    <a href="#live">Live Synthesis</a>
+                    <a href="#about">Process</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>🌐 Connect</h4>
+                    <a href="https://www.instagram.com/larkinsfinestliquids/">Instagram</a>
+                    <a href="https://github.com/alexpensavalle">GitHub</a>
+                    <a href="#hero">Home</a>
+                    <a href="#music">Music</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            © 2025 PaLaTyPuS - Live-coded with ♡
+        </div>
+    </footer>
+
+    <script>
+        // Clean, modular system architecture
+        class PaLaTyPuSEngine {
+            constructor() {
+                this.canvas = document.getElementById('visualCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.video = document.getElementById('bgVideo');
+                
+                this.state = {
+                    freq: 20,
+                    sync: 0.1,
+                    offset: 0.8,
+                    speed: 1,
+                    mouseX: 0,
+                    mouseY: 0,
+                    time: 0,
+                    pattern: 0,
+                    deviceType: this.getDeviceType()
+                };
+                
+                this.patterns = ['oscillator', 'noise', 'shapes', 'modulation'];
+                this.isRunning = false;
+                
+                this.init();
+            }
+            
+            getDeviceType() {
+                const width = window.innerWidth;
+                if (width <= 480) return 'mobile';
+                if (width <= 768) return 'tablet';
+                return 'desktop';
+            }
+            
+            init() {
+                this.setupCanvas();
+                this.setupEvents();
+                this.setupControls();
+                this.setupVideo();
+                this.setupMagicalObjects();
+                this.setupAudioViz();
+                this.start();
+            }
+            
+            setupCanvas() {
+                const updateSize = () => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const dpr = window.devicePixelRatio || 1;
+                    
+                    this.canvas.width = rect.width * dpr;
+                    this.canvas.height = rect.height * dpr;
+                    this.ctx.scale(dpr, dpr);
+                    
+                    this.canvas.style.width = rect.width + 'px';
+                    this.canvas.style.height = rect.height + 'px';
+                    
+                    this.state.width = rect.width;
+                    this.state.height = rect.height;
+                };
+                
+                updateSize();
+                window.addEventListener('resize', updateSize);
+            }
+            
+            setupEvents() {
+                // Mouse/touch events
+                const updateMouse = (e) => {
+                    this.state.mouseX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                    this.state.mouseY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+                };
+                
+                document.addEventListener('mousemove', updateMouse);
+                document.addEventListener('touchmove', updateMouse);
+                
+                // Click to randomize
+                this.canvas.addEventListener('click', () => {
+                    this.state.freq = Math.random() * 40 + 10;
+                    this.state.sync = Math.random() * 2;
+                    this.state.offset = Math.random() * 2;
+                    this.updateSliders();
+                });
+                
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.state.pattern = (this.state.pattern + 1) % this.patterns.length;
+                            break;
+                        case 'KeyR':
+                            this.resetParams();
+                            break;
+                        case 'KeyV':
+                            this.toggleVideo();
+                            break;
+                        case 'KeyC':
+                            toggleCodeOverlay();
+                            break;
+                        case 'KeyF':
+                            this.toggleFullscreen();
+                            break;
+                    }
+                });
+            }
+            
+            setupControls() {
+                const sliders = {
+                    freqSlider: 'freq',
+                    syncSlider: 'sync',
+                    offsetSlider: 'offset',
+                    speedSlider: 'speed'
+                };
+                
+                Object.entries(sliders).forEach(([id, param]) => {
+                    const slider = document.getElementById(id);
+                    if (slider) {
+                        slider.addEventListener('input', (e) => {
+                            this.state[param] = parseFloat(e.target.value);
+                        });
+                    }
+                });
+            }
+            
+            setupVideo() {
+                if (!this.video) return;
+                
+                this.video.addEventListener('loadeddata', () => {
+                    console.log('✅ Video loaded');
+                });
+                
+                this.video.addEventListener('error', () => {
+                    console.log('❌ Video failed to load');
+                });
+                
+                this.video.play().catch(() => {
+                    console.log('⚠️ Video autoplay blocked');
+                });
+            }
+            
+            setupMagicalObjects() {
+                const container = document.getElementById('magicalObjects');
+                if (!container) return;
+                
+                const objectCount = this.state.deviceType === 'mobile' ? 8 : 15;
+                
+                for (let i = 0; i < objectCount; i++) {
+                    const obj = document.createElement('div');
+                    obj.className = `magical-object magical-${['orb', 'triangle', 'square'][i % 3]}`;
+                    
+                    obj.style.left = Math.random() * 100 + '%';
+                    obj.style.top = Math.random() * 100 + '%';
+                    obj.style.animationDelay = Math.random() * 5 + 's';
+                    
+                    container.appendChild(obj);
+                }
+            }
+            
+            setupAudioViz() {
+                const container = document.getElementById('audioViz');
+                if (!container) return;
+                
+                const barCount = this.state.deviceType === 'mobile' ? 20 : 40;
+                
+                for (let i = 0; i < barCount; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'viz-bar';
+                    container.appendChild(bar);
+                }
+                
+                // Animate bars
+                setInterval(() => {
+                    const bars = container.querySelectorAll('.viz-bar');
+                    bars.forEach((bar, i) => {
+                        const height = Math.sin(this.state.time * 2 + i * 0.3) * 20 + 5;
+                        bar.style.height = Math.max(2, height) + 'px';
+                    });
+                }, 50);
+            }
+            
+            start() {
+                this.isRunning = true;
+                this.animate();
+            }
+            
+            animate() {
+                if (!this.isRunning) return;
+                
+                this.state.time += 0.016 * this.state.speed;
+                
+                this.render();
+                this.updateLiveCode();
+                this.updateParallax();
+                
+                requestAnimationFrame(() => this.animate());
+            }
+            
+            render() {
+                if (!this.state.width || !this.state.height) return;
+                
+                // Clear canvas
+                this.ctx.globalCompositeOperation = 'source-over';
+                this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+                
+                // Set blend mode
+                this.ctx.globalCompositeOperation = 'screen';
+                
+                // Render current pattern
+                const patternName = this.patterns[this.state.pattern];
+                switch(patternName) {
+                    case 'oscillator':
+                        this.renderOscillator();
+                        break;
+                    case 'noise':
+                        this.renderNoise();
+                        break;
+                    case 'shapes':
+                        this.renderShapes();
+                        break;
+                    case 'modulation':
+                        this.renderModulation();
+                        break;
+                }
+            }
+            
+            renderOscillator() {
+                const imageData = this.ctx.createImageData(this.state.width, this.state.height);
+                const data = imageData.data;
+                
+                for (let x = 0; x < this.state.width; x += 2) {
+                    for (let y = 0; y < this.state.height; y += 2) {
+                        const i = (y * this.state.width + x) * 4;
+                        
+                        const wave1 = Math.sin(x * 0.01 * this.state.freq + this.state.time);
+                        const wave2 = Math.cos(y * 0.01 * this.state.freq + this.state.time * this.state.sync);
+                        const wave3 = Math.sin((x + y) * 0.005 * this.state.freq + this.state.time + this.state.offset);
+                        
+                        const mouseInfluence = Math.sin(
+                            Math.sqrt(Math.pow(x - this.state.mouseX, 2) + Math.pow(y - this.state.mouseY, 2)) * 0.01 + this.state.time * 2
+                        );
+                        
+                        const r = (wave1 + mouseInfluence) * 100 + 128;
+                        const g = (wave2 + mouseInfluence) * 100 + 128;
+                        const b = (wave3 + mouseInfluence) * 100 + 128;
+                        
+                        data[i] = Math.max(0, Math.min(255, r));
+                        data[i + 1] = Math.max(0, Math.min(255, g));
+                        data[i + 2] = Math.max(0, Math.min(255, b));
+                        data[i + 3] = 150; // Semi-transparent
+                    }
+                }
+                
+                this.ctx.putImageData(imageData, 0, 0);
+            }
+            
+            renderNoise() {
+                this.ctx.fillStyle = `hsla(${this.state.time * 50}, 70%, 50%, 0.1)`;
+                for (let i = 0; i < 50; i++) {
+                    const x = Math.random() * this.state.width;
+                    const y = Math.random() * this.state.height;
+                    const size = Math.random() * 10 + 2;
+                    this.ctx.fillRect(x, y, size, size);
+                }
+            }
+            
+            renderShapes() {
+                this.ctx.strokeStyle = `hsla(${this.state.time * 30}, 80%, 60%, 0.8)`;
+                this.ctx.lineWidth = 2;
+                
+                const centerX = this.state.width / 2;
+                const centerY = this.state.height / 2;
+                
+                for (let i = 0; i < 5; i++) {
+                    const radius = 50 + i * 30 + Math.sin(this.state.time + i) * 20;
+                    const sides = 3 + i;
+                    
+                    this.ctx.save();
+                    this.ctx.translate(centerX, centerY);
+                    this.ctx.rotate(this.state.time * 0.5 + i);
+                    
+                    this.ctx.beginPath();
+                    for (let j = 0; j < sides; j++) {
+                        const angle = (j * 2 * Math.PI) / sides;
+                        const x = Math.cos(angle) * radius;
+                        const y = Math.sin(angle) * radius;
+                        if (j === 0) this.ctx.moveTo(x, y);
+                        else this.ctx.lineTo(x, y);
+                    }
+                    this.ctx.closePath();
+                    this.ctx.stroke();
+                    
+                    this.ctx.restore();
+                }
+            }
+            
+            renderModulation() {
+                const gradient = this.ctx.createRadialGradient(
+                    this.state.mouseX, this.state.mouseY, 0,
+                    this.state.mouseX, this.state.mouseY, 200
+                );
+                gradient.addColorStop(0, `hsla(${this.state.time * 100}, 80%, 60%, 0.8)`);
+                gradient.addColorStop(1, 'transparent');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.state.width, this.state.height);
+            }
+            
+            updateLiveCode() {
+                const codes = document.querySelectorAll('.live-code');
+                codes.forEach((code, i) => {
+                    code.classList.remove('active');
+                });
+                
+                const activeIndex = Math.floor(this.state.time * 0.3) % codes.length;
+                if (codes[activeIndex]) {
+                    codes[activeIndex].classList.add('active');
+                }
+            }
+            
+            updateParallax() {
+                // Very subtle parallax effect
+                const scrollY = window.scrollY;
+                const parallaxElements = document.querySelectorAll('.parallax-bg');
+                
+                parallaxElements.forEach((el, i) => {
+                    const speed = 0.02 + (i % 3) * 0.01; // Much more subtle: 0.02, 0.03, 0.04
+                    const yPos = scrollY * speed;
+                    const rotation = scrollY * 0.02 * (i + 1);
+                    el.style.transform = `translateY(${yPos}px) rotate(${rotation}deg)`;
+                });
+                
+                // Video parallax
+                if (this.video) {
+                    const videoParallax = scrollY * 0.05; // Very subtle
+                    this.video.style.transform = `translateY(${videoParallax}px)`;
+                }
+            }
+            
+            updateSliders() {
+                document.getElementById('freqSlider').value = this.state.freq;
+                document.getElementById('syncSlider').value = this.state.sync;
+                document.getElementById('offsetSlider').value = this.state.offset;
+                document.getElementById('speedSlider').value = this.state.speed;
+            }
+            
+            resetParams() {
+                this.state.freq = 20;
+                this.state.sync = 0.1;
+                this.state.offset = 0.8;
+                this.state.speed = 1;
+                this.updateSliders();
+            }
+            
+            toggleVideo() {
+                const videoLayer = document.getElementById('videoLayer');
+                if (videoLayer) {
+                    videoLayer.classList.toggle('visible');
+                }
+            }
+            
+            toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        // Global functions
+        function toggleCodeOverlay() {
+            const overlay = document.getElementById('codeOverlay');
+            overlay.classList.toggle('minimized');
+        }
+        
+        // Initialize everything
+        let engine;
+        
+        window.addEventListener('load', () => {
+            engine = new PaLaTyPuSEngine();
+            console.log('🎨 PaLaTyPuS Engine initialized');
+        });
+    </script>
+</body>
+</html>

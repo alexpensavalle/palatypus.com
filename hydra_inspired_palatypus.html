@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaLaTyPuS - Live Coded Reality</title>
+    <meta name="description" content="PaLaTyPuS - experimental music meets live-coded visuals. Real-time audio-reactive synthesis.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            color: #00ff88;
+            background: #000;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Full-screen canvas for Hydra-style visuals */
+        #visual-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: #000;
+        }
+
+        /* Live coding interface overlay */
+        .code-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .code-overlay.minimized {
+            transform: translateX(-350px);
+        }
+
+        .code-toggle {
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            writing-mode: vertical-rl;
+            font-size: 10px;
+        }
+
+        .live-code {
+            color: #00ff88;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .live-code.active {
+            opacity: 1;
+            color: #ffff00;
+            background: rgba(255, 255, 0, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* Audio visualizer bars */
+        .audio-viz {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 60px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .viz-bar {
+            flex: 1;
+            background: linear-gradient(to top, #00ff88, #0080ff, #ff0080);
+            min-height: 2px;
+            border-radius: 1px;
+            transition: height 0.1s ease;
+        }
+
+        /* Navigation with live-coding aesthetic */
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 8px 12px;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .nav-item:hover {
+            color: #ffff00;
+            border-color: #ffff00;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Content sections with live-coding overlay */
+        .content-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            backdrop-filter: blur(2px);
+        }
+
+        .content-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff88, #0080ff, #ff0080, #00ff88);
+            border-radius: 12px;
+            z-index: -1;
+            animation: border-cycle 4s linear infinite;
+        }
+
+        @keyframes border-cycle {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #00ff88;
+            margin-bottom: 30px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '_';
+            animation: cursor-blink 1.5s infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .code-block {
+            background: rgba(0, 20, 0, 0.8);
+            border: 1px solid #004400;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #00ff88;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-block::before {
+            content: '> ';
+            color: #ffff00;
+        }
+
+        /* Music embed styling */
+        .music-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .embed-wrapper {
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .embed-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ff88, #0080ff, #ff0080);
+            animation: progress-bar 3s ease-in-out infinite;
+        }
+
+        @keyframes progress-bar {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        /* Interactive cursor effects */
+        .cursor-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #00ff88;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+        }
+
+        /* Control panel */
+        .control-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+        }
+
+        .control-panel h4 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .control-slider {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .control-slider label {
+            color: #888;
+            font-size: 11px;
+            min-width: 60px;
+        }
+
+        .control-slider input[type="range"] {
+            flex: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .code-overlay {
+                max-width: 300px;
+                font-size: 10px;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .nav-item {
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+
+            .content-panel {
+                padding: 25px;
+                max-width: 90vw;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .music-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .control-panel {
+                bottom: 120px;
+                right: 10px;
+                left: 10px;
+                padding: 15px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-screen visual canvas -->
+    <canvas id="visual-canvas"></canvas>
+
+    <!-- Audio visualizer bars -->
+    <div class="audio-viz" id="audioViz">
+        <!-- Generated dynamically -->
+    </div>
+
+    <!-- Live coding overlay -->
+    <div class="code-overlay" id="codeOverlay">
+        <div class="code-toggle" onclick="toggleCodeOverlay()">CODE</div>
+        <div class="live-code" id="code0">osc(20, 0.1, 0.8).out()</div>
+        <div class="live-code" id="code1">noise(3).color(2, 0.5).out()</div>
+        <div class="live-code" id="code2">shape(6).repeat(3,2).out()</div>
+        <div class="live-code" id="code3">osc().modulate(noise(10)).out()</div>
+        <div class="live-code" id="code4">voronoi().kaleid(8).out()</div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <a href="#music" class="nav-item">STREAM</a>
+        <a href="#about" class="nav-item">PROCESS</a>
+        <a href="#live" class="nav-item">LIVE_CODE</a>
+        <a href="https://www.instagram.com/larkinsfinestliquids/" class="nav-item" target="_blank">VISUALS</a>
+        <a href="https://github.com/alexpensavalle" class="nav-item" target="_blank">SOURCE</a>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <h4>LIVE_CONTROLS</h4>
+        <div class="control-slider">
+            <label>FREQ:</label>
+            <input type="range" id="freqSlider" min="1" max="50" value="20">
+        </div>
+        <div class="control-slider">
+            <label>SYNC:</label>
+            <input type="range" id="syncSlider" min="0" max="2" step="0.1" value="0.1">
+        </div>
+        <div class="control-slider">
+            <label>OFFSET:</label>
+            <input type="range" id="offsetSlider" min="0" max="2" step="0.1" value="0.8">
+        </div>
+        <div class="control-slider">
+            <label>SPEED:</label>
+            <input type="range" id="speedSlider" min="0.1" max="5" step="0.1" value="1">
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section" id="music">
+        <div class="content-panel">
+            <h2 class="section-title">PALATYPUS.INIT()</h2>
+            
+            <div class="code-block">
+                // Live-coded experimental music synthesis
+                // Real-time audio-reactive visuals
+                // Nature's jack-of-all-trades approach to digital art
+            </div>
+
+            <div class="music-container">
+                <div class="embed-wrapper">
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4ku7ePqgfHKnfsXybAKR9Z?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+                
+                <div class="embed-wrapper">
+                    <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/940320025&color=%2300ff88&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                </div>
+            </div>
+
+            <div class="code-block">
+                src(s0).modulate(osc(10)).color(2,1).out()
+                // webcam input modulated by oscillator
+                // real-time feedback loops create emergence
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section" id="about">
+        <div class="content-panel">
+            <h2 class="section-title">PROCESS.LOG</h2>
+            
+            <div class="code-block">
+                function createExperience() {
+                    const music = synthesize(chaos, order);
+                    const visuals = modulate(reality, perception);
+                    return blend(music, visuals, consciousness);
+                }
+            </div>
+
+            <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                PaLaTyPuS operates at the intersection of experimental music and live-coded visuals. 
+                Each composition emerges from real-time synthesis, where algorithmic processes 
+                generate both sonic and visual patterns that evolve together in networked environments.
+            </p>
+
+            <div class="code-block">
+                osc(20, () => time * 0.1).kaleid(8)
+                    .modulateRotate(noise(3), 0.5)
+                    .color(2, 0.5, () => mouse.x)
+                    .out()
+            </div>
+
+            <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                The creative process embraces unpredictability and emergence. Like nature's platypus - 
+                a creature that defies categorization - this work combines elements that shouldn't 
+                work together but create something entirely new.
+            </p>
+        </div>
+    </div>
+
+    <div class="content-section" id="live">
+        <div class="content-panel">
+            <h2 class="section-title">LIVE.CODE_SESSION</h2>
+            
+            <div class="code-block">
+                // Press SPACE to cycle through live patterns
+                // Move mouse to modulate parameters
+                // Click to trigger visual events
+            </div>
+
+            <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                This environment supports real-time visual coding inspired by Hydra video synthesis. 
+                The background canvas responds to your interactions and continuously generates 
+                new patterns based on modular synthesis principles.
+            </p>
+
+            <div class="code-block">
+                noise(scale, speed).color(r, g, b)
+                    .rotate(angle, speed)
+                    .kaleid(segments)
+                    .modulate(src(feedback))
+                    .out()
+            </div>
+
+            <p style="color: #888; line-height: 1.8; margin: 20px 0;">
+                Each function in the chain transforms the visual signal, creating complex emergent 
+                behaviors from simple rules. The system becomes a collaborative partner in the 
+                creative process, generating unexpected outcomes from intentional inputs.
+            </p>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://www.instagram.com/larkinsfinestliquids/" 
+                   style="color: #00ff88; text-decoration: none; border: 1px solid #00ff88; padding: 12px 24px; border-radius: 6px; display: inline-block; transition: all 0.3s ease;"
+                   onmouseover="this.style.backgroundColor='rgba(0,255,136,0.1)'"
+                   onmouseout="this.style.backgroundColor='transparent'">
+                    VIEW_VISUAL_ARCHIVE →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup for Hydra-inspired visuals
+        const canvas = document.getElementById('visual-canvas');
+        const ctx = canvas.getContext('2d');
+        let animationId;
+        
+        // Visual parameters (Hydra-style)
+        let params = {
+            freq: 20,
+            sync: 0.1,
+            offset: 0.8,
+            speed: 1,
+            mouseX: 0,
+            mouseY: 0,
+            time: 0
+        };
+
+        // Current pattern index
+        let currentPattern = 0;
+        const patterns = [
+            'oscillator',
+            'noise',
+            'shapes',
+            'modulation',
+            'voronoi'
+        ];
+
+        // Resize canvas to full screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Hydra-inspired oscillator pattern
+        function drawOscillator() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let x = 0; x < canvas.width; x += 2) {
+                for (let y = 0; y < canvas.height; y += 2) {
+                    const i = (y * canvas.width + x) * 4;
+                    
+                    // Oscillator math inspired by Hydra
+                    const wave1 = Math.sin(x * 0.01 * params.freq + params.time * params.speed);
+                    const wave2 = Math.cos(y * 0.01 * params.freq + params.time * params.speed * params.sync);
+                    const wave3 = Math.sin((x + y) * 0.005 * params.freq + params.time * params.speed + params.offset);
+                    
+                    // Mouse modulation
+                    const mouseInfluence = Math.sin(Math.sqrt(Math.pow(x - params.mouseX, 2) + Math.pow(y - params.mouseY, 2)) * 0.01 + params.time * 2);
+                    
+                    const r = (wave1 + mouseInfluence) * 127 + 128;
+                    const g = (wave2 + mouseInfluence) * 127 + 128;
+                    const b = (wave3 + mouseInfluence) * 127 + 128;
+                    
+                    data[i] = r;
+                    data[i + 1] = g;
+                    data[i + 2] = b;
+                    data[i + 3] = 255;
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Hydra-inspired noise pattern
+        function drawNoise() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let x = 0; x < canvas.width; x += 3) {
+                for (let y = 0; y < canvas.height; y += 3) {
+                    const i = (y * canvas.width + x) * 4;
+                    
+                    // Perlin-like noise
+                    const noise1 = Math.sin(x * 0.01 + params.time * 0.5) * Math.cos(y * 0.01 + params.time * 0.3);
+                    const noise2 = Math.sin(x * 0.02 + params.time * 0.7) * Math.cos(y * 0.02 + params.time * 0.4);
+                    const noise3 = Math.sin(x * 0.005 + params.time * 0.2) * Math.cos(y * 0.005 + params.time * 0.6);
+                    
+                    const r = (noise1 + 1) * 127 * (params.mouseX / canvas.width);
+                    const g = (noise2 + 1) * 127 * (params.mouseY / canvas.height);
+                    const b = (noise3 + 1) * 127;
+                    
+                    data[i] = r;
+                    data[i + 1] = g;
+                    data[i + 2] = b;
+                    data[i + 3] = 255;
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Hydra-inspired geometric shapes
+        function drawShapes() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const sides = 6;
+            const repeats = 3;
+            
+            for (let rx = 0; rx < repeats; rx++) {
+                for (let ry = 0; ry < repeats; ry++) {
+                    const x = (canvas.width / repeats) * rx + (canvas.width / repeats) / 2;
+                    const y = (canvas.height / repeats) * ry + (canvas.height / repeats) / 2;
+                    
+                    const radius = 50 + Math.sin(params.time * params.speed + rx + ry) * 30;
+                    const rotation = params.time * params.speed * 0.5 + rx * 0.5;
+                    
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(rotation);
+                    
+                    ctx.beginPath();
+                    for (let i = 0; i < sides; i++) {
+                        const angle = (i * 2 * Math.PI) / sides;
+                        const px = Math.cos(angle) * radius;
+                        const py = Math.sin(angle) * radius;
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    
+                    const hue = (params.time * 30 + rx * 60 + ry * 120 + params.mouseX * 0.1) % 360;
+                    ctx.strokeStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                }
+            }
+        }
+
+        // Hydra-inspired modulation effects
+        function drawModulation() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let x = 0; x < canvas.width; x += 2) {
+                for (let y = 0; y < canvas.height; y += 2) {
+                    const i = (y * canvas.width + x) * 4;
+                    
+                    // Base oscillator
+                    const base = Math.sin(x * 0.02 + params.time * params.speed);
+                    
+                    // Modulation source
+                    const modulator = Math.sin(y * 0.01 + params.time * params.speed * 0.7) * 0.5;
+                    
+                    // Apply modulation
+                    const modulated = Math.sin(x * 0.02 * (1 + modulator) + params.time * params.speed);
+                    
+                    // Color based on mouse position
+                    const mouseDistance = Math.sqrt(Math.pow(x - params.mouseX, 2) + Math.pow(y - params.mouseY, 2));
+                    const colorShift = Math.sin(mouseDistance * 0.01 + params.time) * 0.5 + 0.5;
+                    
+                    const r = (base + 1) * 127 * colorShift;
+                    const g = (modulated + 1) * 127;
+                    const b = (base * modulated + 1) * 127 * (1 - colorShift);
+                    
+                    data[i] = r;
+                    data[i + 1] = g;
+                    data[i + 2] = b;
+                    data[i + 3] = 255;
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Hydra-inspired Voronoi pattern
+        function drawVoronoi() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // Voronoi seeds
+            const seeds = [];
+            const numSeeds = 8;
+            for (let i = 0; i < numSeeds; i++) {
+                seeds.push({
+                    x: (Math.sin(i + params.time * 0.3) + 1) * canvas.width * 0.5,
+                    y: (Math.cos(i + params.time * 0.4) + 1) * canvas.height * 0.5,
+                    hue: (i * 45 + params.time * 30) % 360
+                });
+            }
+            
+            for (let x = 0; x < canvas.width; x += 4) {
+                for (let y = 0; y < canvas.height; y += 4) {
+                    const i = (y * canvas.width + x) * 4;
+                    
+                    let minDist = Infinity;
+                    let closestSeed = 0;
+                    
+                    for (let s = 0; s < seeds.length; s++) {
+                        const dist = Math.sqrt(Math.pow(x - seeds[s].x, 2) + Math.pow(y - seeds[s].y, 2));
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closestSeed = s;
+                        }
+                    }
+                    
+                    const hue = seeds[closestSeed].hue;
+                    const saturation = 70 + Math.sin(minDist * 0.01 + params.time) * 30;
+                    const lightness = 50 + Math.sin(minDist * 0.02 + params.time * 0.5) * 30;
+                    
+                    // Convert HSL to RGB
+                    const c = (1 - Math.abs(2 * lightness / 100 - 1)) * saturation / 100;
+                    const x_val = c * (1 - Math.abs((hue / 60) % 2 - 1));
+                    const m = lightness / 100 - c / 2;
+                    
+                    let r, g, b;
+                    if (hue < 60) [r, g, b] = [c, x_val, 0];
+                    else if (hue < 120) [r, g, b] = [x_val, c, 0];
+                    else if (hue < 180) [r, g, b] = [0, c, x_val];
+                    else if (hue < 240) [r, g, b] = [0, x_val, c];
+                    else if (hue < 300) [r, g, b] = [x_val, 0, c];
+                    else [r, g, b] = [c, 0, x_val];
+                    
+                    data[i] = (r + m) * 255;
+                    data[i + 1] = (g + m) * 255;
+                    data[i + 2] = (b + m) * 255;
+                    data[i + 3] = 255;
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Main animation loop
+        function animate() {
+            params.time += 0.016 * params.speed; // ~60fps
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw current pattern
+            switch (patterns[currentPattern]) {
+                case 'oscillator':
+                    drawOscillator();
+                    break;
+                case 'noise':
+                    drawNoise();
+                    break;
+                case 'shapes':
+                    drawShapes();
+                    break;
+                case 'modulation':
+                    drawModulation();
+                    break;
+                case 'voronoi':
+                    drawVoronoi();
+                    break;
+            }
+            
+            // Update live code display
+            updateLiveCodeDisplay();
+            
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Update live code overlay
+        function updateLiveCodeDisplay() {
+            const codeElements = document.querySelectorAll('.live-code');
+            codeElements.forEach((el, index) => {
+                el.classList.remove('active');
+            });
+            
+            const activeIndex = Math.floor(params.time * 0.5) % codeElements.length;
+            if (codeElements[activeIndex]) {
+                codeElements[activeIndex].classList.add('active');
+            }
+        }
+
+        // Audio visualization
+        function setupAudioViz() {
+            const audioViz = document.getElementById('audioViz');
+            const numBars = 64;
+            
+            for (let i = 0; i < numBars; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'viz-bar';
+                audioViz.appendChild(bar);
+            }
+            
+            // Animate bars with fake audio data
+            setInterval(() => {
+                const bars = audioViz.querySelectorAll('.viz-bar');
+                bars.forEach((bar, index) => {
+                    const height = Math.sin(params.time * 2 + index * 0.2) * 30 + 10;
+                    bar.style.height = Math.max(2, height) + 'px';
+                });
+            }, 50);
+        }
+
+        // Cursor trail effect
+        function setupCursorTrail() {
+            const trails = [];
+            const maxTrails = 20;
+            
+            document.addEventListener('mousemove', (e) => {
+                params.mouseX = e.clientX;
+                params.mouseY = e.clientY;
+                
+                // Create trail dot
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                document.body.appendChild(trail);
+                
+                trails.push(trail);
+                
+                // Remove old trails
+                if (trails.length > maxTrails) {
+                    const oldTrail = trails.shift();
+                    if (oldTrail.parentNode) {
+                        oldTrail.parentNode.removeChild(oldTrail);
+                    }
+                }
+                
+                // Fade out trail
+                setTimeout(() => {
+                    if (trail.parentNode) {
+                        trail.style.opacity = '0';
+                        trail.style.transform = 'scale(0)';
+                        setTimeout(() => {
+                            if (trail.parentNode) {
+                                trail.parentNode.removeChild(trail);
+                            }
+                        }, 300);
+                    }
+                }, 100);
+            });
+        }
+
+        // Control panel interactions
+        function setupControls() {
+            document.getElementById('freqSlider').addEventListener('input', (e) => {
+                params.freq = parseFloat(e.target.value);
+            });
+            
+            document.getElementById('syncSlider').addEventListener('input', (e) => {
+                params.sync = parseFloat(e.target.value);
+            });
+            
+            document.getElementById('offsetSlider').addEventListener('input', (e) => {
+                params.offset = parseFloat(e.target.value);
+            });
+            
+            document.getElementById('speedSlider').addEventListener('input', (e) => {
+                params.speed = parseFloat(e.target.value);
+            });
+        }
+
+        // Keyboard interactions
+        function setupKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                switch (e.code) {
+                    case 'Space':
+                        e.preventDefault();
+                        currentPattern = (currentPattern + 1) % patterns.length;
+                        break;
+                    case 'KeyR':
+                        // Reset parameters
+                        params.freq = 20;
+                        params.sync = 0.1;
+                        params.offset = 0.8;
+                        params.speed = 1;
+                        document.getElementById('freqSlider').value = params.freq;
+                        document.getElementById('syncSlider').value = params.sync;
+                        document.getElementById('offsetSlider').value = params.offset;
+                        document.getElementById('speedSlider').value = params.speed;
+                        break;
+                }
+            });
+        }
+
+        // Toggle code overlay
+        function toggleCodeOverlay() {
+            const overlay = document.getElementById('codeOverlay');
+            overlay.classList.toggle('minimized');
+        }
+
+        // Initialize everything
+        function init() {
+            resizeCanvas();
+            setupAudioViz();
+            setupCursorTrail();
+            setupControls();
+            setupKeyboard();
+            animate();
+        }
+
+        // Event listeners
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('load', init);
+
+        // Click to trigger visual events
+        canvas.addEventListener('click', (e) => {
+            // Random pattern switch on click
+            currentPattern = Math.floor(Math.random() * patterns.length);
+            
+            // Parameter randomization
+            params.freq = Math.random() * 50 + 1;
+            params.sync = Math.random() * 2;
+            params.offset = Math.random() * 2;
+            
+            // Update sliders
+            document.getElementById('freqSlider').value = params.freq;
+            document.getElementById('syncSlider').value = params.sync;
+            document.getElementById('offsetSlider').value = params.offset;
+        });
+    </script>
+</body>
+</html>
